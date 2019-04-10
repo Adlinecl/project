@@ -1,0 +1,54 @@
+<nz-layout class="ant-layout">
+    <nz-header class="head" style="display:flex;justify-content: space-between">
+      <div class="title">
+        库存管理系统
+      </div>
+      <div class="login-user">
+        <div class="news">
+          <!-- <nz-badge [nzCount]="5" style="margin-right: 24px;"> -->
+            <!-- <img src="/assets/images/news.png"> -->
+          <!-- </nz-badge> -->
+        </div>
+        <div class="user-info">
+          <!-- <p><img src="/assets/images/user.png"></p> -->
+          <p>业务员<i nz-icon [nzType]="'caret-down'"></i></p>
+        </div>
+        <div>
+          <p style="cursor: pointer;" (click)="loginOut()">退出</p>
+        </div>
+      </div>
+    </nz-header>
+    <nz-layout>
+      <nz-sider class="side" [nzWidth]="160">
+        <ul nz-menu [nzMode]="'inline'" nzTheme='light'>
+          <li nz-menu-item [routerLink]="['/page/role']" routerLinkActive="ant-menu-item-selected">
+            <span title>
+              <!-- <img src="../../assets/images/site.png" alt="现场踏勘"> -->
+              <span class="changeMargin">基本信息管理</span>
+            </span>
+          </li>
+          <li nz-menu-item [routerLink]="['/page/repertory']" routerLinkActive="ant-menu-item-selected">
+            <span title>
+              <!-- <img src="../../assets/images/plane.png" alt="采样方案"> -->
+              <span class="changeMargin">库存管理</span>
+            </span>
+          </li>
+          <li nz-menu-item [routerLink]="['/page/sales']" routerLinkActive="ant-menu-item-selected">
+            <span title>
+              <!-- <img src="../../assets/images/write.png" alt="记录采样"> -->
+              <span class="changeMargin">销售列表</span>
+            </span>
+          </li>
+          <li nz-menu-item [routerLink]="['/page/bill']" routerLinkActive="ant-menu-item-selected">
+            <span title>
+              <!-- <img src="../../assets/images/query.png" alt="记录检测"> -->
+              <span class="changeMargin">账单</span>
+            </span>
+          </li>
+        </ul>
+      </nz-sider>
+      <nz-content class="content">
+        <router-outlet></router-outlet>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>

@@ -1,5 +1,6 @@
 <div class="page">
   <div class="top"></div>
+ <button (click)="sendMessageToserver()">点击发送webSocket消息</button>
   <div class="card-container">
     <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
       <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name ">

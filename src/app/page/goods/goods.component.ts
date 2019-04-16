@@ -3,17 +3,17 @@ import { NzModalService } from 'ng-zorro-antd';
 import { HttpService } from '../../http.service';
 
 @Component({
-    selector: 'app-sales',
-    templateUrl: './sales.component.html',
-    styleUrls: ['./sales.component.css']
+    selector: 'app-goods',
+    templateUrl: './goods.component.html',
+    styleUrls: ['./goods.component.less']
 })
-export class SalesComponent implements OnInit {
+export class GoodsComponent implements OnInit {
     orderList = [];
     nowPage = 1;
     // tslint:disable-next-line:variable-name
     _total = 100;
     listOfDisplayData: any[] = [];
-    mapOfCheckedId: { [ key: string ]: boolean } = {};
+    mapOfCheckedId: { [key: string]: boolean } = {};
     isAllDisplayDataChecked = false;
     isIndeterminate = false;
     allChecked = false;
@@ -38,5 +38,5 @@ export class SalesComponent implements OnInit {
         this.listOfDisplayData.forEach(item => this.mapOfCheckedId[item.id] = value);
         this.refreshStatus();
     }
-    returnSales() {}
+    sales() {}
 }

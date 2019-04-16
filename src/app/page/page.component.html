@@ -1,6 +1,6 @@
 <nz-layout class="ant-layout">
     <nz-header class="head" style="display:flex;justify-content: space-between">
-      <div class="title">
+      <div class="title" style="color: #ffffff">
         库存管理系统
       </div>
       <div class="login-user">
@@ -11,7 +11,8 @@
         </div>
         <div class="user-info">
           <!-- <p><img src="/assets/images/user.png"></p> -->
-          <p>业务员<i nz-icon [nzType]="'caret-down'"></i></p>
+          <!-- <i nz-icon [nzType]="'caret-down'"></i> -->
+          <p>{{userName}}</p>
         </div>
         <div>
           <p style="cursor: pointer;" (click)="loginOut()">退出</p>
@@ -36,7 +37,13 @@
           <li nz-menu-item [routerLink]="['/page/sales']" routerLinkActive="ant-menu-item-selected">
             <span title>
               <!-- <img src="../../assets/images/write.png" alt="记录采样"> -->
-              <span class="changeMargin">销售列表</span>
+              <span class="changeMargin">订单管理</span>
+            </span>
+          </li>
+          <li nz-menu-item [routerLink]="['/page/goods']" routerLinkActive="ant-menu-item-selected">
+            <span title>
+              <!-- <img src="../../assets/images/write.png" alt="记录采样"> -->
+              <span class="changeMargin">商品销售</span>
             </span>
           </li>
           <li nz-menu-item [routerLink]="['/page/bill']" routerLinkActive="ant-menu-item-selected">

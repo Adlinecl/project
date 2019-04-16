@@ -5,22 +5,14 @@
         <thead class="table-thead">
             <tr>
                 <!-- // 商品分类:欧式、中式；商家名称，代码；商品基本信息：名称、代码、生产厂家、
-尺寸、颜色、生产日期，进销存（补货提示，商品降价促销），利润结算等功能。 -->
+  尺寸、颜色、生产日期，进销存（补货提示，商品降价促销），利润结算等功能。 -->
                 <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
                     (nzCheckedChange)="checkAll($event)"></th>
                 <th>商品名称</th>
                 <th>生产厂家</th>
                 <th>销售价格</th>
                 <th>折扣</th>
-                <th>销售单价</th>
-                <th>销售总价</th>
-                <th>应退款</th>
-                <th>实际退款</th>
-                <th>退货手续费</th>
-                <th>客户名称</th>
-                <th>销售员</th>
-                <th>销售数量</th>
-                <th>退货数量</th>
+                <th>折扣单价</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -32,16 +24,8 @@
                 <td>1</td>
                 <td>1</td>
                 <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
                 <td>
-                    <a (click)="returnSales()">退货</a>
+                    <a (click)="sales()">出售</a>
                 </td>
             </tr>
         </tbody>

@@ -6,6 +6,7 @@ import { DetailinComponent } from './detailin/detailin.component';
 import { RoleComponent } from './role/role.component';
 import { SalesComponent } from './sales/sales.component';
 import { BillComponent } from './bill/bill.component';
+import { GoodsComponent } from './goods/goods.component';
 
 const pageRoute: Routes = [
   {
@@ -31,6 +32,10 @@ const pageRoute: Routes = [
           {
             path: 'bill',
             component: BillComponent,
+          },
+          {
+            path: 'goods',
+            component: GoodsComponent,
           }
       ]
   },

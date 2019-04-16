@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { NgZorroAntdModule } from 'ng-zorro-antd';
+import { NgZorroAntdModule, NZ_NOTIFICATION_CONFIG } from 'ng-zorro-antd';
 import {PageComponent} from './page.component';
 import { RepertoryComponent } from './repertory/repertory.component';
 import { PageRoutingModule } from './page-routing.module';
@@ -12,9 +12,10 @@ import { DetailinComponent } from './detailin/detailin.component';
 import { RoleComponent } from './role/role.component';
 import { SalesComponent } from './sales/sales.component';
 import { BillComponent } from './bill/bill.component';
+import { GoodsComponent } from './goods/goods.component';
 
 @NgModule({
-    declarations: [PageComponent, RepertoryComponent, DetailinComponent, RoleComponent, SalesComponent, BillComponent],
+    declarations: [PageComponent, RepertoryComponent, DetailinComponent, RoleComponent, SalesComponent, BillComponent, GoodsComponent],
     imports: [
         CommonModule,
         FormsModule,
@@ -26,7 +27,8 @@ import { BillComponent } from './bill/bill.component';
         // NgZorroAntdModule,
     ],
     providers: [
-        HttpService
+        HttpService,
+        { provide: NZ_NOTIFICATION_CONFIG, useValue: { nzDuration: 3000 }}
         // 放service的地方 这样页面就不需要引入provider了
     ],
     entryComponents: [PageComponent, RepertoryComponent, DetailinComponent],

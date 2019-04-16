@@ -49,31 +49,3 @@
   <!-- <ng-template #prefixUser><i nz-icon type="user"></i></ng-template> -->
   <!-- <ng-template #prefixLock><i nz-icon type="lock"></i></ng-template> -->
 </div>
-<!-- <div *ngIf="isShowRole"> -->
-    <button nz-button nzType="primary" (click)="showModal()" *ngIf="isShowRole">
-         <span>
-             创建角色
-         </span>
-    </button>
-    <nz-modal
-        [(nzVisible)]="isVisible"
-        nzTitle="Modal Title"
-        (nzOnCancel)="handleCancel()"
-        (nzOnOk)="handleOk()"
-        [nzOkLoading]="isOkLoading"
-        >
-        <div>
-            role: <input type="text" [(ngModel)]="roleParams.roleName">
-            <br>
-            <nz-select class="common-select"  style="width: 200px;height: 30px;" [(ngModel)]="roleParams.permissionId" nzAllowClear>
-                <nz-option
-                    *ngFor="let option of selectPermissions"
-                    [nzLabel]="option.text"
-                    [nzValue]="option.id"
-                    >
-                </nz-option>
-            </nz-select>
-            <button (click)="newRole()">newRoles</button>
-        </div>
-    </nz-modal>
-<!-- </div> -->

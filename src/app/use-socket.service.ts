@@ -3,7 +3,7 @@ import { Observable, Subject } from 'rxjs';
 import { WebSocketService } from './web-socket.service';
 import {map} from 'rxjs/operators';
 
-const USE_SOCKET_URL = 'ws://localhost:8080';
+const USE_SOCKET_URL = 'ws://192.168.0.108:8081/websocket';
 
 export interface Message {
     author: string ;
@@ -12,17 +12,15 @@ export interface Message {
 
 @Injectable()
 export class UserSocketService {
-    public messages: Subject<Message>;
+    public messages: Subject<any>;
     constructor(wsService: WebSocketService) {
         // tslint:disable-next-line:no-angle-bracket-type-assertion
-        this.messages = <Subject<Message>> wsService
+        this.messages = <Subject<any>> wsService
             .connect(USE_SOCKET_URL)
-            .pipe(map((response: MessageEvent): Message => {
-                const data = JSON.parse(response.data);
-                return {
-                    author: data.author,
-                    message: data.message
-                };
+            .pipe(map((response: MessageEvent): any => {
+                console.log(response);
+                const data = response.data;
+                return data;
             }));
     }
 }

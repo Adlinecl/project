@@ -19,8 +19,16 @@ export class PageComponent implements OnInit {
             ) { }
 
   ngOnInit() {
+    this.getUserName();
   // console.log('========route', PageRoutingModule);
-    this.route.queryParams.subscribe((params) => this.userName = params.userName);
+    // this.route.queryParams.subscribe((params) => this.userName = params.userName);
+  }
+  getUserName() {
+    this.userName = localStorage.getItem('userName');
+    if (this.userName) {
+        this.userName = JSON.parse(this.userName);
+        console.log('userName', this.userName);
+    }
   }
   err = function catchError(err) {
     console.log('err', err);
@@ -36,8 +44,10 @@ export class PageComponent implements OnInit {
     }
   };
   loginOut() {
+    this.router.navigate(['login']);
     this.httpService.logout({userName: this.userName}).subscribe((r: any) => {
       console.log(r);
+      localStorage.removeItem('token');
       this.router.navigate(['login']);
     }, err => this.err(err) );
   }

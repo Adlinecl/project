@@ -1,3 +1,56 @@
-<p>
-  bill works!
-</p>
+<div class="page">
+    <div class="top"></div>
+    <div class="card-container">
+        <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
+            <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name ">
+                <div class="bill" *ngIf="tab.index == 0">
+                    <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="listOfData" [nzLoading]="loading" [nzTotal]="total"
+                        [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">
+                        <thead (nzSortChange)="sort($event)" nzSingleSort>
+                            <tr>
+                                <th>商品名称</th>
+                                <th nzShowSort nzSortKey="name">销售数量</th>
+                                <th nzShowSort nzSortKey="name">销售总价</th>
+                                <th>生产厂家</th>
+                                <th nzShowSort nzSortKey="name">盈利</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <div *ngIf="tab.index == 1">
+                    <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="listOfData" [nzLoading]="loading" [nzTotal]="total"
+                        [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">
+                        <thead (nzSortChange)="sort($event)" nzSingleSort>
+                            <tr>
+                                <th>销售人姓名</th>
+                                <th nzShowSort nzSortKey="name">销售数量</th>
+                                <th nzShowSort nzSortKey="name">销售总价</th>
+                                <th>商品名称</th>
+                                <th>生产厂家</th>
+                                <th nzShowSort nzSortKey="name">盈利</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+</div>

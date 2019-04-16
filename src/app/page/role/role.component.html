@@ -1,152 +1,277 @@
 <div class="page">
-  <div class="top"></div>
-  <div class="card-container">
-    <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
-      <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name ">
-        <div class="serch-print">
-          <!-- <div class="search"> -->
-            <!-- <input type="text" placeholder="请输入关键字进行搜索"> -->
-            <!-- <input type="text" placeholder="请输入多于2个的字符" *ngIf="!isLength" [(ngModel)]="searchList.name"> -->
-            <!-- <a (click)="search()"><img src="../../../assets/images/search.png" alt="搜索标"></a> -->
-          <!-- </div> -->
-          <div>商品分类:
-              <nz-select class="common-select"  style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
-                  <nz-option
-                      *ngFor="let option of selectGoods"
-                      [nzLabel]="option.label"
-                      [nzValue]="option.label"
-                      >
-                  </nz-option>
-              </nz-select>
-          </div>
-          <div>商品名称:
-              <nz-select class="common-select"  style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
-                  <nz-option
-                      *ngFor="let option of selectGoods"
-                      [nzLabel]="option.label"
-                      [nzValue]="option.label"
-                      >
-                  </nz-option>
-              </nz-select>
-          </div>
-          <div>生产厂家:
-              <nz-select class="common-select"  style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
-                  <nz-option
-                      *ngFor="let option of selectGoods"
-                      [nzLabel]="option.label"
-                      [nzValue]="option.label"
-                      >
-                  </nz-option>
-              </nz-select>
-          </div>
-          <div>
-              <button>查询</button>
-              <button>重置</button>
-          </div>
-          <div class="print">
-            <button *ngIf="tab.index == 2" (click)="add()">
-              <!-- <img src="../../../assets/images/approval.png" alt="审批"> -->
-              <span>批量添加</span>
-            </button>
-            <button *ngIf="tab.index !== 2" (click)="add()">
-              <!-- <img src="../../../assets/images/submit.png" alt="提交"> -->
-              <span>批量添加</span>
-            </button>
-            
-          </div>
-        </div>
-        <div class="search-table" *ngIf="tab.index == 0">
-          <nz-table
-          [nzShowTotal]="rangeTemplate"
-          #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total" [nzPageSize]="10"
-          (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
-          (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
-            <thead class="table-thead">
-              <tr>
-<!-- // 商品分类:欧式、中式；商家名称，代码；商品基本信息：名称、代码、生产厂家、
+    <div class="top"></div>
+    <div class="card-container">
+        <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
+            <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name " (nzSelect)="tabSelect(tab.index)">
+                <div class="serch-print">
+                    <div *ngIf="tab.index == 0">商品分类
+                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
+                            <nz-option *ngFor="let option of selectGoods" [nzLabel]="option.label" [nzValue]="option.label">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                    <div *ngIf="tab.index == 0">商品名称
+                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
+                            <nz-option *ngFor="let option of selectName" [nzLabel]="option.label" [nzValue]="option.label">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                    <div *ngIf="tab.index == 0">生产厂家
+                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
+                            <nz-option *ngFor="let option of selectProvider" [nzLabel]="option.label" [nzValue]="option.label">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                    <div *ngIf="tab.index == 1">
+                        客户名称
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 1">
+                        手机号
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 1">
+                        销售人编号
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 1">
+                        销售人姓名
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 2">
+                        供应商名称
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 2">
+                        采购人编号
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 2">
+                        采购人姓名
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 2">
+                        <button nz-button (click)="addProvider()" nzType="primary">添加</button>
+                    </div>
+                    <div *ngIf="tab.index == 3">
+                        员工姓名
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index == 3">
+                        联系电话
+                        <input nz-input placeholder="" nzSize="default" />
+                    </div>
+                    <div *ngIf="tab.index !== 4">
+                        <button nz-button (click)="search()" nzType="primary">查询</button>
+                    </div>
+                    <div *ngIf="tab.index !== 4">
+                        <button nz-button (click)="clear()" nzType="default">重置</button>
+                    </div>
+                    <div *ngIf="tab.index == 3">
+                        <button nz-button nzType="danger" (click)="delete()">批量删除员工</button>
+                    </div>
+                </div>
+                <div class="search-table" *ngIf="tab.index == 0">
+                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
+                        [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
+                        (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
+                        <thead class="table-thead">
+                            <tr>
+                                <!-- // 商品分类:欧式、中式；商家名称，代码；商品基本信息：名称、代码、生产厂家、
 尺寸、颜色、生产日期，进销存（补货提示，商品降价促销），利润结算等功能。 -->
-                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked"
-                [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
-                <th>商品编号</th>
-                <th>商品名称</th>
-                <th>商品规格</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr  *ngFor="let data of rowSelectionTable.data">
-                <!-- <td nzShowCheckbox  [(nzChecked)]="mapOfCheckedId[data.id]"  (nzCheckedChange)="refreshStatus()"></td>
-                <td>{{data?.code}}</td>
-                <td>{{data?.lims_order_code}}</td>
-                <td>{{data?.sample_classification_name}}</td>
-                <td>{{data?.standards?.exam?.name}}</td>
-                <td>{{data?.standards?.sampling?.name}}</td>
-                <td>{{data?.handlers?.sampling_people}}</td>
-                <td>{{data?.handlers?.accompany_people}}</td>
-                <td>
-                  <a (click)="edit(data.id)" [ngClass]="{commonColor: isnew}">编制</a>
-                </td> -->
-              </tr>
-            </tbody>
-          </nz-table>
-        </div>
-        <div class="search-table" *ngIf="tab.index == 1">
-          <nz-table
-          [nzShowTotal]="rangeTemplate"
-          #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total" [nzPageSize]="10"
-          (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
-          (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
-            <thead class="table-thead">
-              <tr>
-                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked"
-                [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
-                <th>客户编号</th>
-                <th>客户名称</th>
-                <th>手机号</th>
-                <th>销售主管</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td nzShowCheckbox  (nzCheckedChange)="refreshStatus()"></td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-              </tr>
-            </tbody>
-          </nz-table>
-        </div>
-        <div class="search-table" *ngIf="tab.index == 1">
-          <nz-table
-          [nzShowTotal]="rangeTemplate"
-          #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total" [nzPageSize]="10"
-          (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
-          (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
-            <thead class="table-thead">
-              <tr>
-                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked"
-                [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
-                <th>供应商编号</th>
-                <th>供应商名称</th>
-                <th>供应商地址</th>
-                <th>采购主管</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td nzShowCheckbox  (nzCheckedChange)="refreshStatus()"></td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-              </tr>
-            </tbody>
-          </nz-table>
-        </div> 
-      </nz-tab>
-    </nz-tabset>
-  </div>
+                                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
+                                    (nzCheckedChange)="checkAll($event)"></th>
+                                <th>商品类别</th>
+                                <th>商品名称</th>
+                                <th>商品规格</th>
+                                <th>进货成本</th>
+                                <th>销售价格</th>
+
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+
+                                <td>
+                                    <a (click)="editPerson(tab.index)">编辑</a>&nbsp;&nbsp;
+                                    <a (click)="toDetail()">查看详情</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <div class="search-table" *ngIf="tab.index == 1">
+                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
+                        [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
+                        (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
+                        <thead class="table-thead">
+                            <tr>
+                                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
+                                    (nzCheckedChange)="checkAll($event)"></th>
+                                <th>客户编号</th>
+                                <th>客户名称</th>
+                                <th>手机号</th>
+                                <th>销售主管编号</th>
+                                <th>销售主管姓名</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>
+                                    <a (click)="editPerson(tab.index)">编辑</a>&nbsp;&nbsp;&nbsp;
+                                    <a (click)="deleteItem()">删除</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <div class="search-table" *ngIf="tab.index == 2">
+                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
+                        [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
+                        (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
+                        <thead class="table-thead">
+                            <tr>
+                                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
+                                    (nzCheckedChange)="checkAll($event)"></th>
+                                <th>供应商编号</th>
+                                <th>供应商名称</th>
+                                <th>供应商地址</th>
+                                <th>联系电话</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>
+                                    <a (click)="editPerson(tab.index)">编辑</a>&nbsp;&nbsp;&nbsp;
+                                    <a (click)="deleteItem()">删除</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <div class="search-table" *ngIf="tab.index == 3">
+                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
+                        [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
+                        (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
+                        <thead class="table-thead">
+                            <tr>
+                                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
+                                    (nzCheckedChange)="checkAll($event)"></th>
+                                <th>员工编号</th>
+                                <th>员工名称</th>
+                                <th>员工联系电话</th>
+                                <th>年龄</th>
+                                <th>性别</th>
+                                <th>角色</th>
+                                <th>权限</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>
+                                    <a (click)="editPerson(tab.index)">编辑</a>&nbsp;&nbsp;&nbsp;
+                                    <a (click)="deleteItem()">删除</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                    <!-- <nz-modal
+                [(nzVisible)]="isVisible"
+                nzTitle="Modal Title"
+                (nzOnCancel)="handleCancel()"
+                (nzOnOk)="handleOk()"
+                [nzOkLoading]="isOkLoading"
+                >
+                <div>
+                    role: <input type="text" [(ngModel)]="roleParams.roleName">
+                    <br>
+                    <nz-select class="common-select"  style="width: 200px;height: 30px;" [(ngModel)]="roleParams.permissionId" nzAllowClear>
+                        <nz-option
+                            *ngFor="let option of selectPermissions"
+                            [nzLabel]="option.text"
+                            [nzValue]="option.id"
+                            >
+                        </nz-option>
+                    </nz-select>
+                    <button (click)="newRole()">newRoles</button>
+                </div>
+            </nz-modal> -->
+                </div>
+                <div class="search-table" *ngIf="tab.index == 4">
+                    <div>活动开始时间
+                        <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                    </div>
+                    <div>活动结束时间
+                        <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                    </div>
+                    <div>折扣
+                        <input type="text">
+                        <span>%</span>
+                    </div>
+                    <div>
+                        选择折扣商品
+                        <nz-tree-select style="width: 250px" [nzNodes]="nodes" nzShowSearch nzCheckable nzPlaceHolder="Please select" [(ngModel)]="value"
+                            (ngModelChange)="onChange($event)">
+                        </nz-tree-select>
+                    </div>
+                    <div>
+                        <button nz-button (click)="confirm()" nzType="primary">确定</button>
+                        <button nz-button (click)="reset()" nzType="default">重置</button>
+                    </div>
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </div>
 </div>
-<!-- <ng-template #rangeTemplate let-range="range" let-total>
-  10 条/页
-</ng-template> -->
+<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
+    (nzOnCancel)="handleCancel()">
+    <form nz-form [formGroup]="surveyForm" (ngSubmit)="submitForm()">
+        <ng-template #modalTitle>
+            测试
+        </ng-template>
+        <!-- <input type="hidden" formControlName="id" id="id"> -->
+        <ng-template #modalContent>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">地点</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+        </ng-template>
+        <ng-template #modalFooter>
+            <button nz-button nzType="primary" *ngIf="!isAdd" (click)="submitForm()" [nzLoading]="isConfirmLoading">保存</button>
+            <button nz-button nzType="primary" *ngIf="isAdd" (click)="submitForm('add')" [nzLoading]="isConfirmLoading">添加</button>
+            <button nz-button nzType="default" class="ant-cancel" (click)="handleCancel()">取消</button>
+        </ng-template>
+    </form>
+</nz-modal>

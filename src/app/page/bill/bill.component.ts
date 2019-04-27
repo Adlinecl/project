@@ -76,4 +76,6 @@ export class BillComponent implements OnInit {
         //     this.listOfData = data.results;
         //   });
       }
+      search( ) {}
+      clear() {}
 }

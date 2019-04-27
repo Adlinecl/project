@@ -103,6 +103,12 @@ export class RoleComponent implements OnInit {
         }
     ];
     date;
+    title;
+    judge = 0;
+    pageIndex = 1;
+    currentTabIndex = 0;
+    pageSize = 10;
+    state;
     constructor(private modalService: NzModalService,
                 public httpService: HttpService,
                 private fb: FormBuilder, ) { }
@@ -115,7 +121,30 @@ export class RoleComponent implements OnInit {
     }
     tabSelect(index) {
     }
-    tabChange() { }
+    tabChange(event, currentTabIndex) {
+        this.pageIndex = 1;
+        // this.currentTabIndex = event.index;
+        if (event.index === 0 || currentTabIndex === 0) {
+            this.state = 'toDesign';
+            this.mapOfCheckedId = {};
+            this.judge = 0;
+        } else if (event.index === 1 || currentTabIndex === 1) {
+            this.state = 'alreadyDesign';
+            this.mapOfCheckedId = {};
+            this.judge = 1;
+        } else if (event.index === 2 || currentTabIndex === 2) {
+            this.state = 'toApprove';
+            this.mapOfCheckedId = {};
+            this.judge = 2;
+        } else if (event.index === 3 || currentTabIndex === 3) {
+            this.state = 'toDistribute';
+            this.mapOfCheckedId = {};
+            this.judge = 3;
+        } else if (event.index === 4 || currentTabIndex === 4) {
+            this.state = 'toSample';
+            this.mapOfCheckedId = {};
+        }
+    }
     err = function catchError(err) {
         console.log('err', err);
         if (err) {
@@ -151,11 +180,49 @@ export class RoleComponent implements OnInit {
     // editPerson() {
     //     this.isVisible = true;
     // }
+    getSurveyInfo(id) {
+        // this.httpService.findAddress(id).subscribe( (r: any) => {
+        //     this.pointItem = r.data;
+        //     this.surveyForm.get('id').setValue(r.data[0].id);
+        //     this.surveyForm.get('name').setValue(r.data[0].name);
+        //     this.surveyForm.get('lng').setValue(r.data[0].lng);
+        //     this.surveyForm.get('lat').setValue(r.data[0].lat);
+        //     this.surveyForm.get('remark').setValue(r.data[0].remark);
+        //     this.orderNum = r.data.orderNum;
+        // });
+      }
     submitForm() {
-
-    }
+        // this.postPoints.data = [];
+        // // tslint:disable-next-line: forin
+        // for (const i in this.surveyForm.controls) {
+        //   this.surveyForm.controls[i].markAsDirty();
+        //   this.surveyForm.controls[i].updateValueAndValidity();
+        // }
+        // const data = this.surveyForm.value;
+        // if (this.surveyForm.status === 'VALID') {
+        //     // this.pointItem[0].dissatisfaction = this.surveyForm.get('dissatisfaction').value;
+        //     this.pointItem[0].name = this.surveyForm.get('name').value;
+        //     this.pointItem[0].lng = this.surveyForm.get('lng').value;
+        //     this.pointItem[0].lat = this.surveyForm.get('lat').value;
+        //     this.pointItem[0].remark = this.surveyForm.get('remark').value;
+        //     const postData = {
+        //         data: this.pointItem,
+        //     };
+        //     console.log(postData);
+        //     this.httpService.updateAddress(postData).subscribe((r: any) => {
+        //         this.isVisible = false;
+        //         if (r.code === 200) {
+        //         this.modalService.success({ nzTitle: '保存成功！' });
+        //         // this.getTitleList();
+        //         } else {
+        //         this.modalService.error({ nzTitle: '保存失败！' });
+        //         }
+        //     });
+        // }
+      }
     handleCancel() {
         this.isVisible = false;
+        this.surveyForm.reset();
     }
     // 树形选择
     onChange($event: string[]): void {
@@ -166,15 +233,23 @@ export class RoleComponent implements OnInit {
     editPerson(index) {
         switch (index) {
             case 0 :
+            this.title = '编辑商品资料';
+            this.isVisible = true;
             console.log(0);
             break;
             case 1 :
+            this.title = '编辑客户资料';
+            this.isVisible = true;
             console.log(1);
             break;
             case 2:
+            this.title = '编辑供应商资料';
+            this.isVisible = true;
             console.log(2);
             break;
             case 3:
+            this.title = '编辑员工资料';
+            this.isVisible = true;
             console.log(3);
             break;
             default:

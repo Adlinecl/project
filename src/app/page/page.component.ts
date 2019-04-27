@@ -13,6 +13,13 @@ import { DetailinComponent } from './detailin/detailin.component';
 })
 export class PageComponent implements OnInit {
   userName = '';
+  isshow = false;
+  isrole = false;
+  roleParams = {
+    roleName: '',
+    permissionId: '',
+};
+selectPermissions = [];
   constructor(private router: Router,
               public httpService: HttpService,
               private route: ActivatedRoute,
@@ -51,4 +58,27 @@ export class PageComponent implements OnInit {
       this.router.navigate(['login']);
     }, err => this.err(err) );
   }
+  waring() {
+    this.isshow = true;
+  }
+  addRole() {
+    this.isrole = true;
+  }
+  newwaring() {}
+  // 角色相关的东西
+    newRole() {
+        this.httpService.createRole(this.roleParams).subscribe((r: any) => {
+            console.log(r);
+        }, err => this.err(err));
+    }
+
+    permission() {
+        this.httpService.getPermission().subscribe((r: any) => {
+            this.selectPermissions = r;
+        }, err => this.err(err));
+    }
+    serchRoleName(name) {
+        this.httpService.getRole(name).subscribe((r: any) => {
+        }, err => this.err(err));
+    }
 }

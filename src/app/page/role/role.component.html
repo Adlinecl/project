@@ -31,7 +31,7 @@
                         <input nz-input placeholder="" nzSize="default" />
                     </div>
                     <div *ngIf="tab.index == 1">
-                        销售人编号
+                        销售人手机号
                         <input nz-input placeholder="" nzSize="default" />
                     </div>
                     <div *ngIf="tab.index == 1">
@@ -115,10 +115,10 @@
                             <tr>
                                 <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
                                     (nzCheckedChange)="checkAll($event)"></th>
-                                <th>客户编号</th>
+                                <!-- <th>客户编号</th> -->
                                 <th>客户名称</th>
                                 <th>手机号</th>
-                                <th>销售主管编号</th>
+                                <th>销售主管手机号</th>
                                 <th>销售主管姓名</th>
                                 <th>操作</th>
                             </tr>
@@ -126,7 +126,7 @@
                         <tbody>
                             <tr>
                                 <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
-                                <td>1</td>
+                                <!-- <td>1</td> -->
                                 <td>1</td>
                                 <td>1</td>
                                 <td>1</td>
@@ -147,7 +147,7 @@
                             <tr>
                                 <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
                                     (nzCheckedChange)="checkAll($event)"></th>
-                                <th>供应商编号</th>
+                                <!-- <th>供应商编号</th> -->
                                 <th>供应商名称</th>
                                 <th>供应商地址</th>
                                 <th>联系电话</th>
@@ -157,7 +157,7 @@
                         <tbody>
                             <tr>
                                 <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
-                                <td>1</td>
+                                <!-- <td>1</td> -->
                                 <td>1</td>
                                 <td>1</td>
                                 <td>1</td>
@@ -256,12 +256,124 @@
     (nzOnCancel)="handleCancel()">
     <form nz-form [formGroup]="surveyForm" (ngSubmit)="submitForm()">
         <ng-template #modalTitle>
-            测试
+            {{title}}
         </ng-template>
         <!-- <input type="hidden" formControlName="id" id="id"> -->
         <ng-template #modalContent>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">地点</nz-form-label>
+            <nz-form-item *ngIf="judge == 0">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">商品类别</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 0">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">商品名称</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 0">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">商品规格</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 0">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">进货成本</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 0">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">销售价格</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 1">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">客户名称</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 1">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">客户手机号</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 1">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">销售主管名称</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 1">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">手机号</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 2">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">供应商名称</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 2">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">供应商地址</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 2">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">联系电话</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 3">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">员工姓名</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 3">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">联系电话</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 3">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">年龄</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 3">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">性别</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="name" id="name">
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="judge == 3">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">角色</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <input nz-input formControlName="name" id="name">
                     <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
@@ -270,7 +382,7 @@
         </ng-template>
         <ng-template #modalFooter>
             <button nz-button nzType="primary" *ngIf="!isAdd" (click)="submitForm()" [nzLoading]="isConfirmLoading">保存</button>
-            <button nz-button nzType="primary" *ngIf="isAdd" (click)="submitForm('add')" [nzLoading]="isConfirmLoading">添加</button>
+            <!-- <button nz-button nzType="primary" *ngIf="isAdd" (click)="submitForm('add')" [nzLoading]="isConfirmLoading">添加</button>// -->
             <button nz-button nzType="default" class="ant-cancel" (click)="handleCancel()">取消</button>
         </ng-template>
     </form>

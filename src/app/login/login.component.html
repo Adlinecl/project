@@ -18,34 +18,37 @@
 <button (click)="newRole()">newRoles</button>
 </div> -->
 <div class="enter">
-  <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
-    <nz-form-item>
-      <nz-form-control>
-        <nz-input-group [nzPrefix]="prefixUser">
-          <input formControlName="userName" nz-input placeholder="Username" />
-        </nz-input-group>
-        <nz-form-explain *ngIf="validateForm.get('userName')?.dirty && validateForm.get('userName')?.errors"
-          >Please input your username!</nz-form-explain
-        >
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control>
-        <nz-input-group [nzPrefix]="prefixLock">
-          <input formControlName="password" nz-input type="password" placeholder="Password" />
-        </nz-input-group>
-        <nz-form-explain *ngIf="validateForm.get('password')?.dirty && validateForm.get('password')?.errors"
-          >Please input your Password!</nz-form-explain
-        >
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control>
-        <button nz-button nzType="primary" [disabled]="!validateForm.valid">登录</button>
-        <!-- <button nz-button nzType="primary" [disabled]="!validateForm.valid" (click)="clear()">重置</button> -->
-      </nz-form-control>
-    </nz-form-item>
-  </form>
+    <!-- <img src="../../assets/images/63fc57e67440becc3253edfbc10b061c.jpg" alt=""> -->
+    <div class="enter-input">
+        <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+            <nz-form-item>
+              <nz-form-control>
+                <nz-input-group [nzPrefix]="prefixUser">用户名:&nbsp;&nbsp;
+                  <input formControlName="userName" nz-input placeholder="Username" />
+                </nz-input-group>
+                <nz-form-explain *ngIf="validateForm.get('userName')?.dirty && validateForm.get('userName')?.errors"
+                  >Please input your username!</nz-form-explain
+                >
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-input-group [nzPrefix]="prefixLock">密&nbsp;码:&nbsp;&nbsp;
+                  <input formControlName="password" nz-input type="password" placeholder="Password" />
+                </nz-input-group>
+                <nz-form-explain *ngIf="validateForm.get('password')?.dirty && validateForm.get('password')?.errors"
+                  >Please input your Password!</nz-form-explain
+                >
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <button nz-button nzType="primary" [disabled]="!validateForm.valid">登录</button>
+                <!-- <button nz-button nzType="primary" [disabled]="!validateForm.valid" (click)="clear()">重置</button> -->
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+    </div>
   <!-- <ng-template #prefixUser><i nz-icon type="user"></i></ng-template> -->
   <!-- <ng-template #prefixLock><i nz-icon type="lock"></i></ng-template> -->
 </div>

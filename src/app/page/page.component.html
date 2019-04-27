@@ -1,61 +1,86 @@
 <nz-layout class="ant-layout">
-    <nz-header class="head" style="display:flex;justify-content: space-between">
-      <div class="title" style="color: #ffffff">
-        库存管理系统
+  <nz-header class="head" style="display:flex;justify-content: space-between">
+    <div class="title" style="color: #ffffff">
+      库存管理系统
+    </div>
+    <div class="login-user">
+      <div class="news">
+        <!-- <nz-badge [nzCount]="5" style="margin-right: 24px;"> -->
+        <!-- <img src="/assets/images/news.png"> -->
+        <!-- </nz-badge> -->
       </div>
-      <div class="login-user">
-        <div class="news">
-          <!-- <nz-badge [nzCount]="5" style="margin-right: 24px;"> -->
-            <!-- <img src="/assets/images/news.png"> -->
-          <!-- </nz-badge> -->
-        </div>
-        <div class="user-info">
-          <!-- <p><img src="/assets/images/user.png"></p> -->
-          <!-- <i nz-icon [nzType]="'caret-down'"></i> -->
-          <p>{{userName}}</p>
-        </div>
-        <div>
-          <p style="cursor: pointer;" (click)="loginOut()">退出</p>
-        </div>
+      <div class="user-info">
+        <!-- <p><img src="/assets/images/user.png"></p> -->
+        <!-- <i nz-icon [nzType]="'caret-down'"></i> -->
+        <p>{{userName}}</p>
       </div>
-    </nz-header>
-    <nz-layout>
-      <nz-sider class="side" [nzWidth]="160">
-        <ul nz-menu [nzMode]="'inline'" nzTheme='light'>
-          <li nz-menu-item [routerLink]="['/page/role']" routerLinkActive="ant-menu-item-selected">
-            <span title>
-              <!-- <img src="../../assets/images/site.png" alt="现场踏勘"> -->
-              <span class="changeMargin">基本信息管理</span>
-            </span>
-          </li>
-          <li nz-menu-item [routerLink]="['/page/repertory']" routerLinkActive="ant-menu-item-selected">
-            <span title>
-              <!-- <img src="../../assets/images/plane.png" alt="采样方案"> -->
-              <span class="changeMargin">库存管理</span>
-            </span>
-          </li>
-          <li nz-menu-item [routerLink]="['/page/sales']" routerLinkActive="ant-menu-item-selected">
-            <span title>
-              <!-- <img src="../../assets/images/write.png" alt="记录采样"> -->
-              <span class="changeMargin">订单管理</span>
-            </span>
-          </li>
-          <li nz-menu-item [routerLink]="['/page/goods']" routerLinkActive="ant-menu-item-selected">
-            <span title>
-              <!-- <img src="../../assets/images/write.png" alt="记录采样"> -->
-              <span class="changeMargin">商品销售</span>
-            </span>
-          </li>
-          <li nz-menu-item [routerLink]="['/page/bill']" routerLinkActive="ant-menu-item-selected">
-            <span title>
-              <!-- <img src="../../assets/images/query.png" alt="记录检测"> -->
-              <span class="changeMargin">账单</span>
-            </span>
-          </li>
-        </ul>
-      </nz-sider>
-      <nz-content class="content">
-        <router-outlet></router-outlet>
-      </nz-content>
-    </nz-layout>
+      <div>
+        <p style="cursor: pointer;" (click)="addRole()">添加角色</p>
+      </div>
+      <div *ngIf="isrole"  style="width: 200px;height: 30px;line-height: 30px; z-index: 100;">
+        role: <input type="text" style="color: black" [(ngModel)]="roleParams.roleName">
+        <br>
+        <nz-select class="common-select"  style="width: 200px;height: 30px;" [(ngModel)]="roleParams.permissionId" nzAllowClear>
+            <nz-option
+                *ngFor="let option of selectPermissions"
+                [nzLabel]="option.text"
+                [nzValue]="option.id"
+                >
+            </nz-option>
+        </nz-select>
+        <button (click)="newRole()">newRoles</button>
+    </div>
+      &nbsp;&nbsp;&nbsp;
+      <div>
+        <p style="cursor: pointer;" (click)="waring()">库存预警（小于等于10）</p>
+      </div>
+      <div *ngIf="isshow"  style="width: 200px;height: 30px;line-height: 30px; z-index: 100;">
+        <input type="text" style="color: black">
+        <button (click)="newwaring()">确定</button>
+      </div>
+      &nbsp;&nbsp;&nbsp;
+      <div>
+        <p style="cursor: pointer;" (click)="loginOut()">退出</p>
+      </div>
+    </div>
+  </nz-header>
+  <nz-layout>
+    <nz-sider class="side" [nzWidth]="160">
+      <ul nz-menu [nzMode]="'inline'" nzTheme='light'>
+        <li nz-menu-item [routerLink]="['/page/role']" routerLinkActive="ant-menu-item-selected">
+          <span title>
+            <!-- <img src="../../assets/images/site.png" alt="现场踏勘"> -->
+            <span class="changeMargin">基本信息管理</span>
+          </span>
+        </li>
+        <li nz-menu-item [routerLink]="['/page/repertory']" routerLinkActive="ant-menu-item-selected">
+          <span title>
+            <!-- <img src="../../assets/images/plane.png" alt="采样方案"> -->
+            <span class="changeMargin">库存管理</span>
+          </span>
+        </li>
+        <li nz-menu-item [routerLink]="['/page/sales']" routerLinkActive="ant-menu-item-selected">
+          <span title>
+            <!-- <img src="../../assets/images/write.png" alt="记录采样"> -->
+            <span class="changeMargin">订单管理</span>
+          </span>
+        </li>
+        <li nz-menu-item [routerLink]="['/page/goods']" routerLinkActive="ant-menu-item-selected">
+          <span title>
+            <!-- <img src="../../assets/images/write.png" alt="记录采样"> -->
+            <span class="changeMargin">商品销售</span>
+          </span>
+        </li>
+        <li nz-menu-item [routerLink]="['/page/bill']" routerLinkActive="ant-menu-item-selected">
+          <span title>
+            <!-- <img src="../../assets/images/query.png" alt="记录检测"> -->
+            <span class="changeMargin">账单</span>
+          </span>
+        </li>
+      </ul>
+    </nz-sider>
+    <nz-content class="content">
+      <router-outlet></router-outlet>
+    </nz-content>
   </nz-layout>
+</nz-layout>

@@ -3,6 +3,20 @@
     <div class="card-container">
         <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
             <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name ">
+                <div>开始时间
+                    <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                </div>
+                <div>结束时间
+                    <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                </div>
+                <div>盈利总额：
+                    <input type="text">
+                </div>
+                <div>
+                    <button nz-button (click)="search()" nzType="primary">查询</button>
+                    <button nz-button (click)="clear()" nzType="default">重置</button>
+
+                </div>
                 <div class="bill" *ngIf="tab.index == 0">
                     <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="listOfData" [nzLoading]="loading" [nzTotal]="total"
                         [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">

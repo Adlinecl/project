@@ -4,13 +4,13 @@
         <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
             <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name ">
                 <div>开始时间
-                    <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                    <nz-date-picker [(ngModel)]="startDate" (ngModelChange)="onChange($event)"></nz-date-picker>
                 </div>
                 <div>结束时间
-                    <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                    <nz-date-picker [(ngModel)]="endDate" (ngModelChange)="onChange($event)"></nz-date-picker>
                 </div>
                 <div>盈利总额：
-                    <input type="text">
+                    <span></span>
                 </div>
                 <div>
                     <button nz-button (click)="search()" nzType="primary">查询</button>
@@ -35,6 +35,7 @@
                                 <td>1</td>
                                 <td>1</td>
                                 <td>1</td>
+                                <td>1</td>
                             </tr>
                         </tbody>
                     </nz-table>
@@ -45,21 +46,24 @@
                         <thead (nzSortChange)="sort($event)" nzSingleSort>
                             <tr>
                                 <th>销售人姓名</th>
-                                <th nzShowSort nzSortKey="name">销售数量</th>
+                                <!-- <th nzShowSort nzSortKey="name">销售数量</th> -->
                                 <th nzShowSort nzSortKey="name">销售总价</th>
-                                <th>商品名称</th>
-                                <th>生产厂家</th>
+                                <!-- <th>商品名称</th> -->
+                                <!-- <th>生产厂家</th> -->
                                 <th nzShowSort nzSortKey="name">盈利</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <!-- <td>1</td>
+                                <td>1</td> -->
                                 <td>1</td>
                                 <td>1</td>
                                 <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
+                                <td>
+                                    <a (click)="details()">查看详情</a>
+                                </td>
                             </tr>
                         </tbody>
                     </nz-table>
@@ -68,3 +72,29 @@
         </nz-tabset>
     </div>
 </div>
+<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
+    (nzOnCancel)="handleCancel()">
+    <div class="bill">
+        <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="listOfData" [nzLoading]="loading" [nzTotal]="total"
+            [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">
+            <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <tr>
+                    <th>商品名称</th>
+                    <th>销售数量</th>
+                    <th>销售总价</th>
+                    <th>生产厂家</th>
+                    <th>盈利</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</nz-modal>

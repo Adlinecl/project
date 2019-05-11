@@ -7,6 +7,10 @@
     height: 20px;
     background: rgba(241,247,244,1);
 }
+::ng-deep .ant-calendar-picker {
+    width: 275px;
+    height: 40px;
+}
 ::ng-deep .ant-tabs-nav-scroll {
     background:rgba(241,247,244,1);
 }
@@ -48,6 +52,36 @@
             line-height: 30px;
         }
     }
+    
+        .print {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            margin:20px 20px;
+          button  {
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            width:74px;
+            height:34px;
+            border-radius:4px;
+            background: none;
+            color:rgba(31,164,125,1);
+            border:1px solid rgba(31,164,125,1);
+          }
+          button:first-child {
+            margin-right: 10px;
+          }
+        }
+        .ren {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            margin:20px 20px; 
+        }
 }
 ::ng-deep .commonColor {
     color: red;

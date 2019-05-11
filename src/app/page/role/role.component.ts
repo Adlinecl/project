@@ -3,6 +3,7 @@ import { NzModalService } from 'ng-zorro-antd';
 import { HttpService } from '../../http.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DetailinComponent } from '../detailin/detailin.component';
+import { EClickType } from '../../enum-data';
 
 
 @Component({
@@ -11,6 +12,7 @@ import { DetailinComponent } from '../detailin/detailin.component';
     styleUrls: ['./role.component.less']
 })
 export class RoleComponent implements OnInit {
+    EClickType = EClickType;
     orderList = [];
     nowPage = 1;
     // tslint:disable-next-line:variable-name
@@ -21,25 +23,29 @@ export class RoleComponent implements OnInit {
     isIndeterminate = false;
     allChecked = false;
     tabs = [
+        // {
+        //     index: 0,
+        //     name: '商品资料管理',
+        // },
+        // {
+        //     index: 0,
+        //     name: '客户资料管理',
+        // },
         {
             index: 0,
-            name: '商品资料管理',
-        },
-        {
-            index: 1,
-            name: '客户资料管理',
-        },
-        {
-            index: 2,
             name: '供应商资料管理',
         },
         {
-            index: 3,
+            index: 1,
             name: '员工信息管理',
         },
         {
-            index: 4,
+            index: 2,
             name: '活动促销',
+        },
+        {
+            index: 3,
+            name: '角色管理',
         },
     ];
     searchList: {
@@ -54,61 +60,40 @@ export class RoleComponent implements OnInit {
     goods;
     roleParams = {
         roleName: '',
-        permissionId: '',
+        roleId: '',
     };
     selectPermissions = [];
+    activityList = [];
     isVisible = false;
     isConfirmLoading = false;
     surveyForm: FormGroup;
-    // 树形选择
-    value: string[] = ['0-0-0'];
-    nodes = [
-        {
-            title: 'Node1',
-            value: '0-0',
-            key: '0-0',
-            children: [
-                {
-                    title: 'Child Node1',
-                    value: '0-0-0',
-                    key: '0-0-0',
-                    isLeaf: true
-                }
-            ]
-        },
-        {
-            title: 'Node2',
-            value: '0-1',
-            key: '0-1',
-            children: [
-                {
-                    title: 'Child Node3',
-                    value: '0-1-0',
-                    key: '0-1-0',
-                    isLeaf: true
-                },
-                {
-                    title: 'Child Node4',
-                    value: '0-1-1',
-                    key: '0-1-1',
-                    isLeaf: true
-                },
-                {
-                    title: 'Child Node5',
-                    value: '0-1-2',
-                    key: '0-1-2',
-                    isLeaf: true
-                }
-            ]
-        }
-    ];
+    size = 'default';
+    permissionId = [];
+    key;
     date;
     title;
     judge = 0;
     pageIndex = 1;
     currentTabIndex = 0;
     pageSize = 10;
+    userRole = {};
     state;
+    isadd = false;
+    isstop = false;
+    id;
+    status;
+    company = [];
+    roleList = [];
+    roleId = [];
+    users;
+    text;
+    phone;
+    searchItems = {
+        name: '',
+        phone: '',
+    };
+    isrole = false;
+    isdelete = false;
     constructor(private modalService: NzModalService,
                 public httpService: HttpService,
                 private fb: FormBuilder, ) { }
@@ -116,42 +101,104 @@ export class RoleComponent implements OnInit {
     ngOnInit() {
         this.surveyForm = this.fb.group({
             name: [null, [Validators.required]],
+            discount: [null, [Validators.required]],
+            endDate: [null, [Validators.required]],
+            startDate: [null, [Validators.required]],
+            phone: [null, [Validators.required]],
+            address: [null, [Validators.required]],
+            companyName: [null, [Validators.required]],
+            age: [null, [Validators.required]],
+            gender: [null, [Validators.required]],
+            multipleValue: [null, [Validators.required]],
+            roleName: [null, [Validators.required]],
+            roleId: [null, [Validators.required]],
+            permissionId: [null, [Validators.required]],
         });
-        this.permission();
+        // this.permission();
+        this.getCompany();
+        // this.getUsers();
+    }
+    getRole() {
+        this.httpService.getRoleList().subscribe((r: any) => {
+            this.roleList = r;
+            console.log(this.roleList);
+        }, err => this.err(err));
+    }
+    // 做成显示角色在列表里面=================
+    getUserById(id, type?: string) {
+        type = this.key;
+        this.roleId = [];
+        this.httpService.getUserById(id).subscribe((r: any) => {
+            this.userRole = r;
+            for (const item of r.roleName) {
+                this.roleId.push(item.id);
+            }
+            if (type === 'person') {
+                this.surveyForm.get('roleId').setValue(this.roleId);
+            }
+        }, err => this.err(err));
+    }
+    //// 做成显示权限但是没用
+    getRoleById(id) {
+        this.httpService.getRole(id).subscribe((r: any) => {
+            // this.userRole = r;
+            console.log('getRoleById', r);
+        }, err => this.err(err));
+    }
+    getUsers() {
+        this.httpService.getUsers({}).subscribe((r: any) => {
+            if (r.length > 0) {
+                for (const item of r) {
+                    item.islook = false;
+                }
+                this.users = r;
+            }
+            console.log(this.users);
+        }, err => this.err(err));
+    }
+    getActivityList() {
+        this.httpService.getactivity().subscribe((r: any) => {
+            this.activityList = r;
+            console.log(this.activityList);
+        }, err => this.err(err));
+    }
+    getCompany() {
+        this.httpService.gcompany().subscribe((r: any) => {
+            this.company = r;
+            console.log(this.company);
+        }, err => this.err(err));
+    }
+    look(data) {
+        data.islook = !data.islook;
+        if (data.islook) {
+            this.getUserById(data.id);
+        }
     }
     tabSelect(index) {
     }
     tabChange(event, currentTabIndex) {
         this.pageIndex = 1;
-        // this.currentTabIndex = event.index;
         if (event.index === 0 || currentTabIndex === 0) {
-            this.state = 'toDesign';
-            this.mapOfCheckedId = {};
             this.judge = 0;
+            this.getCompany();
         } else if (event.index === 1 || currentTabIndex === 1) {
-            this.state = 'alreadyDesign';
-            this.mapOfCheckedId = {};
             this.judge = 1;
+            this.getUsers();
+            this.getRole();
         } else if (event.index === 2 || currentTabIndex === 2) {
-            this.state = 'toApprove';
-            this.mapOfCheckedId = {};
             this.judge = 2;
+            this.getActivityList();
+
         } else if (event.index === 3 || currentTabIndex === 3) {
-            this.state = 'toDistribute';
-            this.mapOfCheckedId = {};
             this.judge = 3;
-        } else if (event.index === 4 || currentTabIndex === 4) {
-            this.state = 'toSample';
-            this.mapOfCheckedId = {};
+            this.getRole();
+            this.permission();
+
         }
     }
     err = function catchError(err) {
         console.log('err', err);
         if (err) {
-            // this.enterParams = {
-            //   userName: '',
-            //   password: '',
-            // };
             this.modalService.error({
                 nzTitle: '操作失败',
             });
@@ -174,52 +221,201 @@ export class RoleComponent implements OnInit {
         this.listOfDisplayData.forEach(item => this.mapOfCheckedId[item.id] = value);
         this.refreshStatus();
     }
-    search() {}
-    clear() {}
-    delete() {}
+    search() {
+        this.httpService.getUsers(this.searchItems).subscribe((r: any) => {
+            if (r.length > 0) {
+                for (const item of r) {
+                    item.islook = false;
+                }
+                this.users = r;
+            }
+            console.log(this.users);
+        }, err => this.err(err));
+    }
+    clear() {
+        this.searchItems = {
+            name: '',
+            phone: '',
+        };
+        this.getUsers();
+    }
+    delete() { }
     // editPerson() {
     //     this.isVisible = true;
     // }
-    getSurveyInfo(id) {
-        // this.httpService.findAddress(id).subscribe( (r: any) => {
-        //     this.pointItem = r.data;
-        //     this.surveyForm.get('id').setValue(r.data[0].id);
-        //     this.surveyForm.get('name').setValue(r.data[0].name);
-        //     this.surveyForm.get('lng').setValue(r.data[0].lng);
-        //     this.surveyForm.get('lat').setValue(r.data[0].lat);
-        //     this.surveyForm.get('remark').setValue(r.data[0].remark);
-        //     this.orderNum = r.data.orderNum;
-        // });
-      }
-    submitForm() {
-        // this.postPoints.data = [];
-        // // tslint:disable-next-line: forin
-        // for (const i in this.surveyForm.controls) {
-        //   this.surveyForm.controls[i].markAsDirty();
-        //   this.surveyForm.controls[i].updateValueAndValidity();
-        // }
-        // const data = this.surveyForm.value;
-        // if (this.surveyForm.status === 'VALID') {
-        //     // this.pointItem[0].dissatisfaction = this.surveyForm.get('dissatisfaction').value;
-        //     this.pointItem[0].name = this.surveyForm.get('name').value;
-        //     this.pointItem[0].lng = this.surveyForm.get('lng').value;
-        //     this.pointItem[0].lat = this.surveyForm.get('lat').value;
-        //     this.pointItem[0].remark = this.surveyForm.get('remark').value;
-        //     const postData = {
-        //         data: this.pointItem,
-        //     };
-        //     console.log(postData);
-        //     this.httpService.updateAddress(postData).subscribe((r: any) => {
-        //         this.isVisible = false;
-        //         if (r.code === 200) {
-        //         this.modalService.success({ nzTitle: '保存成功！' });
-        //         // this.getTitleList();
-        //         } else {
-        //         this.modalService.error({ nzTitle: '保存失败！' });
-        //         }
-        //     });
-        // }
-      }
+    submitForm(type?: string, value?: string) {
+        value = this.key;
+        let postlist = {};
+        if (value === 'componey') {
+            // tslint:disable-next-line: forin
+            for (const i in this.surveyForm.controls) {
+                this.surveyForm.controls[i].markAsDirty();
+                this.surveyForm.controls[i].updateValueAndValidity();
+            }
+            const data = this.surveyForm.value;
+            if (data.phone && data.address && data.companyName) {
+                if (type === 'add') {
+                    postlist = {
+                        phone: data.phone,
+                        address: data.address,
+                        companyName: data.companyName,
+                    };
+                    this.httpService.postcompany(postlist).subscribe((r: any) => {
+                        if (r === 'success') {
+                            this.isVisible = false;
+                            this.getCompany();
+                        }
+                    }, err => this.err(err));
+                } else {
+                    postlist = {
+                        phone: this.surveyForm.get('phone').value,
+                        address: this.surveyForm.get('address').value,
+                        companyName: this.surveyForm.get('companyName').value,
+                        id: this.id,
+                    };
+                    console.log(postlist);
+                    this.httpService.putcompany(postlist).subscribe((r: any) => {
+                        if (r === 'success') {
+                            this.isVisible = false;
+                            this.getCompany();
+                        }
+                    }, err => this.err(err));
+                }
+
+            }
+        } else if (value === 'person') {
+            // tslint:disable-next-line: forin
+            for (const i in this.surveyForm.controls) {
+                this.surveyForm.controls[i].markAsDirty();
+                this.surveyForm.controls[i].updateValueAndValidity();
+            }
+            const data = this.surveyForm.value;
+            // this.phone = data.phone;
+            if (data.phone && data.name && data.age && data.gender) {
+                if (type === 'add') {
+                    postlist = {
+                        name: data.name,
+                        phone: data.phone,
+                        age: data.age,
+                        gender: data.gender,
+                        roleId: data.roleId,
+                    };
+                    this.httpService.putenterIn(postlist).subscribe((r: any) => {
+                        this.isVisible = false;
+                        this.modalService.success({
+                            nzTitle: '添加员工成功',
+                        });
+                        this.getUsers();
+                    }, err => this.err(err));
+                } else {
+                    postlist = {
+                        type: 'USER',
+                        id: this.id,
+                        ids: this.surveyForm.get('roleId').value,
+                    };
+                    this.httpService.updateUserOrRole(postlist).subscribe((r: any) => {
+                        this.isVisible = false;
+                        this.getUsers();
+                    }, err => this.err(err));
+                }
+
+            }
+        } else if (value === 'activity') {
+            // tslint:disable-next-line: forin
+            for (const i in this.surveyForm.controls) {
+                this.surveyForm.controls[i].markAsDirty();
+                this.surveyForm.controls[i].updateValueAndValidity();
+            }
+            const data = this.surveyForm.value;
+            if (data.name && data.discount && data.endDate && data.startDate) {
+                if (type === 'add') {
+                    postlist = {
+                        name: data.name,
+                        discount: data.discount,
+                        endDate: data.endDate,
+                        startDate: data.startDate,
+                    };
+                    this.httpService.creatActivity(postlist).subscribe((r: any) => {
+                        if (r === 'success') {
+                            this.isVisible = false;
+                            this.getActivityList();
+                        }
+                    }, err => this.err(err));
+                } else {
+                    postlist = {
+                        id: this.id,
+                        status: this.status,
+                        name: this.surveyForm.get('name').value,
+                        discount: this.surveyForm.get('discount').value,
+                        endDate: this.surveyForm.get('endDate').value,
+                        startDate: this.surveyForm.get('startDate').value,
+                    };
+                    console.log(postlist);
+                    this.httpService.creatActivity(postlist).subscribe((r: any) => {
+                        if (r === 'success') {
+                            this.isVisible = false;
+                            this.getActivityList();
+                        }
+                    }, err => this.err(err));
+                }
+
+            }
+
+        } else if (value === 'role') {
+            // tslint:disable-next-line:forin
+            for (const i in this.surveyForm.controls) {
+                this.surveyForm.controls[i].markAsDirty();
+                this.surveyForm.controls[i].updateValueAndValidity();
+            }
+            const data = this.surveyForm.value;
+            if (data.roleName && data.permissionId) {
+                if (type === 'add') {
+                    postlist = {
+                        roleName: data.roleName,
+                        permissionId: data.permissionId,
+                    };
+                    console.log(postlist);
+                    this.httpService.createRole(postlist).subscribe((r: any) => {
+                        this.isVisible = false;
+                        this.getRole();
+                    }, err => this.err(err));
+                }
+            } else {
+                postlist = {
+                    type: 'ROLE',
+                    id: this.id,
+                    ids: this.surveyForm.get('permissionId').value,
+                };
+                this.httpService.updateUserOrRole(postlist).subscribe((r: any) => {
+                    this.isVisible = false;
+                    this.getRole();
+                }, err => this.err(err));
+            }
+        } else if (value === 'editPersonNote') {
+            // tslint:disable-next-line:forin
+            for (const i in this.surveyForm.controls) {
+                this.surveyForm.controls[i].markAsDirty();
+                this.surveyForm.controls[i].updateValueAndValidity();
+            }
+            const data = this.surveyForm.value;
+            if (data.phone && data.name && data.age && data.gender) {
+                postlist = {
+                    phone: this.surveyForm.get('phone').value,
+                    name: this.surveyForm.get('name').value,
+                    age: this.surveyForm.get('age').value,
+                    gender: this.surveyForm.get('gender').value,
+                    id: this.id,
+                };
+                this.httpService.editUser(
+                    postlist
+                ).subscribe((r: any) => {
+                    this.isVisible = false;
+                    this.getUsers();
+                }, err => this.err(err));
+            }
+        }
+
+    }
     handleCancel() {
         this.isVisible = false;
         this.surveyForm.reset();
@@ -228,32 +424,81 @@ export class RoleComponent implements OnInit {
     onChange($event: string[]): void {
         console.log($event);
     }
-    confirm() {}
-    reset() {}
-    editPerson(index) {
+    confirm() { }
+    reset() { }
+    editNote(data) {
+        this.key = 'editPersonNote';
+        this.judge = 1;
+        this.isVisible = true;
+        this.isadd = false;
+        this.isrole = false;
+        this.isdelete = false;
+        this.id = data.id;
+        this.surveyForm.get('name').setValue(data.name);
+        this.surveyForm.get('phone').setValue(data.phone);
+        this.surveyForm.get('age').setValue(data.age);
+        this.surveyForm.get('gender').setValue(data.gender);
+        // 编辑员工基本信息
+        // this.httpService.deletecompany(
+        //     {
+        //         id: data.id,
+        //     }
+        // ).subscribe((r: any) => {
+        //     if (r === 'success') {
+        //         this.getUsers();
+        //     }
+        // }, err => this.err(err));
+    }
+    editPerson(index, data) {
         switch (index) {
-            case 0 :
-            this.title = '编辑商品资料';
-            this.isVisible = true;
-            console.log(0);
-            break;
-            case 1 :
-            this.title = '编辑客户资料';
-            this.isVisible = true;
-            console.log(1);
-            break;
+            case 0:
+                this.key = 'componey',
+                    this.title = '编辑供应商资料';
+                this.isVisible = true;
+                this.isadd = false;
+                this.id = data.id;
+                this.surveyForm.get('companyName').setValue(data.companyName);
+                this.surveyForm.get('phone').setValue(data.phone);
+                this.surveyForm.get('address').setValue(data.address);
+                console.log(21);
+                break;
+            case 1:
+                this.key = 'person',
+                    this.title = '编辑员工资料';
+                this.getUserById(data.id);
+                this.isVisible = true;
+                this.isadd = false;
+                this.isrole = true;
+                this.isdelete = true;
+                this.id = data.id;
+                this.surveyForm.get('name').setValue(data.name);
+                this.surveyForm.get('phone').setValue(data.phone);
+                this.surveyForm.get('age').setValue(data.age);
+                this.surveyForm.get('gender').setValue(data.gender);
+                console.log(32);
+                break;
             case 2:
-            this.title = '编辑供应商资料';
-            this.isVisible = true;
-            console.log(2);
-            break;
+                this.key = 'activity',
+                    this.title = '编辑活动';
+                this.isVisible = true;
+                this.isadd = false;
+                this.id = data.id;
+                this.status = data.status;
+                this.surveyForm.get('name').setValue(data.name);
+                this.surveyForm.get('discount').setValue(data.discount);
+                this.surveyForm.get('endDate').setValue(data.endDate);
+                this.surveyForm.get('startDate').setValue(data.startDate);
+                break;
             case 3:
-            this.title = '编辑员工资料';
-            this.isVisible = true;
-            console.log(3);
-            break;
+                this.key = 'role',
+                    this.title = '编辑权限';
+                this.isVisible = true;
+                this.isadd = false;
+                this.id = data.id;
+                this.surveyForm.get('permissionId').setValue(data.permissionId);
+                break;
             default:
-            break;
+                break;
         }
     }
     toDetail(): void {
@@ -275,10 +520,104 @@ export class RoleComponent implements OnInit {
             const instance = modal.getContentComponent();
         }, 2000);
     }
-    deleteItem() {}
+    stopclick(data) {
+        this.httpService.stopActivity(data).subscribe((r: any) => {
+            if (r === 'success') {
+                this.getActivityList();
+            }
+        }, err => this.err(err));
+
+    }
+    deleteItem(data, index) {
+        this.modalService.confirm({
+            nzTitle: '确定删除',
+            // nzContent: '<b style="color: red;">Some descriptions</b>',
+            nzOkText: '是',
+            nzOkType: 'danger',
+            nzOnOk: () => {
+                if (index === 0) {
+                    this.httpService.deletecompany(
+                        {
+                            id: data.id,
+                            companyName: data.companyName,
+                            phone: data.phone,
+                            address: data.address,
+                        }
+                    ).subscribe((r: any) => {
+                        if (r === 'success') {
+                            this.getCompany();
+                        }
+                    }, err => this.err(err));
+                } else if (index === 1) {
+                    this.httpService.deleteUser(
+                        {
+                            id: data.id,
+                        }
+                    ).subscribe((r: any) => {
+                        if (r === 'success') {
+                            this.getUsers();
+                        }
+                    }, err => this.err(err));
+                } else if (index === 2) {
+                    this.httpService.stopActivity(
+                        {
+                            status: 'delete',
+                            id: data.id,
+                        }
+                    ).subscribe((r: any) => {
+                        if (r === 'success') {
+                            this.getActivityList();
+                        }
+                    }, err => this.err(err));
+                }
+            },
+            nzCancelText: '否',
+            nzOnCancel: () => console.log('Cancel')
+        });
+    }
+    setNew(index) {
+        switch (index) {
+            case 0:
+                this.key = 'componey',
+                    this.title = '新增供应商';
+                this.isVisible = true;
+                this.isadd = true;
+                this.surveyForm.reset();
+                console.log(2);
+                break;
+            case 1:
+                this.key = 'person',
+                    this.title = '新增员工';
+                this.isVisible = true;
+                this.isadd = true;
+                this.isrole = false;
+                this.isdelete = true;
+                this.surveyForm.reset();
+                console.log(3);
+                break;
+            case 2:
+                this.key = 'activity',
+                    this.title = '创建活动';
+                this.isVisible = true;
+                this.isadd = true;
+                this.surveyForm.reset();
+                console.log(3);
+                break;
+            case 3:
+                this.key = 'role',
+                    this.title = '创建角色';
+                this.isVisible = true;
+                this.isadd = true;
+                this.surveyForm.reset();
+                console.log(3);
+                break;
+            default:
+                break;
+        }
+    }
     /// 角色相关的东西
-    newRole() {
-        this.httpService.createRole(this.roleParams).subscribe((r: any) => {
+    newRole(roleList) {
+        this.httpService.createRole(roleList).subscribe((r: any) => {
             console.log(r);
         }, err => this.err(err));
     }
@@ -286,10 +625,6 @@ export class RoleComponent implements OnInit {
     permission() {
         this.httpService.getPermission().subscribe((r: any) => {
             this.selectPermissions = r;
-        }, err => this.err(err));
-    }
-    serchRoleName(name) {
-        this.httpService.getRole(name).subscribe((r: any) => {
         }, err => this.err(err));
     }
 }

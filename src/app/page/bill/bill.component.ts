@@ -1,6 +1,9 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
 import { HttpService } from '../../http.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as momentNs from 'moment';
+const moment = momentNs;
 
 @Component({
     selector: 'app-bill',
@@ -36,10 +39,19 @@ export class BillComponent implements OnInit {
             name: '销售人员',
         },
     ];
+    isVisible = false;
+    surveyForm: FormGroup;
+    title;
+    startDate = '';
+    endDate = '';
     constructor(private modalService: NzModalService,
-                public httpService: HttpService, ) { }
+                public httpService: HttpService,
+                private fb: FormBuilder, ) { }
 
     ngOnInit() {
+        // this.surveyForm = this.fb.group({
+        //     name: [null, [Validators.required]],
+        // });
     }
     tabChange() {}
     refreshStatus(): void {
@@ -78,4 +90,31 @@ export class BillComponent implements OnInit {
       }
       search( ) {}
       clear() {}
+      details() {
+        this.isVisible = true;
+        this.title = '查看详情';
+      }
+      onChange(event) {
+
+      }
+      handleCancel() {
+        this.isVisible = false;
+        // this.surveyForm.reset();
+    }
+    dateFormat(dateVal: Date | string, isEnd?: boolean) {
+        const timeZone = new Date().getTimezoneOffset() / (-60);
+        let newTimeZone = '';
+        if (Math.abs(timeZone) < 10) {
+          if (timeZone < 0) {
+            newTimeZone = '-0' + Math.abs(timeZone);
+          } else {
+            newTimeZone = '+0' + Math.abs(timeZone);
+          }
+        }
+        if (isEnd) {
+          return dateVal ? moment(dateVal).format('YYYY-MM-DD') + 'T23:59:59.999' + newTimeZone + '00' : '';
+        } else {
+          return dateVal ? moment(dateVal).format('YYYY-MM-DD') + 'T00:00:00.000' + newTimeZone + '00' : '';
+        }
+      }
 }

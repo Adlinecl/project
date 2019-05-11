@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class GoodsComponent implements OnInit {
     orderList = [];
     nowPage = 1;
+    title;
     // tslint:disable-next-line:variable-name
     _total = 100;
     listOfDisplayData: any[] = [];
@@ -20,6 +21,20 @@ export class GoodsComponent implements OnInit {
     allChecked = false;
     isVisible = false;
     surveyForm: FormGroup;
+    list = [];
+    activityList = [];
+    saleItem = {
+        number: 0, // 入库数量
+        customer_name: '', // 客户id
+        customer_phone: '', // 客户id
+    };
+    activity;
+    type;
+    price;
+    companyName;
+    name;
+    size;
+    id;
     constructor(private modalService: NzModalService,
                 public httpService: HttpService,
                 private fb: FormBuilder, ) { }
@@ -28,6 +43,28 @@ export class GoodsComponent implements OnInit {
         this.surveyForm = this.fb.group({
             name: [null, [Validators.required]],
         });
+        this.getList();
+        this.getActivityList();
+    }
+    err = function catchError(err) {
+        console.log('err', err);
+        if (err) {
+            this.modalService.error({
+                nzTitle: err.error.message ? err.error.message : '操作失败',
+            });
+            return;
+        }
+    };
+    getList() {
+        this.httpService.findGoods({}).subscribe((r: any) => {
+            this.list = r;
+        }, err => this.err(err));
+    }
+    getActivityList() {
+        this.httpService.getactivitytype().subscribe((r: any) => {
+            this.activityList = r;
+            console.log(this.activityList);
+        }, err => this.err(err));
     }
     refreshStatus(): void {
         this.isAllDisplayDataChecked = this.listOfDisplayData.every(item =>
@@ -45,51 +82,36 @@ export class GoodsComponent implements OnInit {
         this.listOfDisplayData.forEach(item => this.mapOfCheckedId[item.id] = value);
         this.refreshStatus();
     }
-    getSurveyInfo(id) {
-        // this.httpService.findAddress(id).subscribe( (r: any) => {
-        //     this.pointItem = r.data;
-        //     this.surveyForm.get('id').setValue(r.data[0].id);
-        //     this.surveyForm.get('name').setValue(r.data[0].name);
-        //     this.surveyForm.get('lng').setValue(r.data[0].lng);
-        //     this.surveyForm.get('lat').setValue(r.data[0].lat);
-        //     this.surveyForm.get('remark').setValue(r.data[0].remark);
-        //     this.orderNum = r.data.orderNum;
-        // });
-    }
-    submitForm() {
-        // this.postPoints.data = [];
-        // // tslint:disable-next-line: forin
-        // for (const i in this.surveyForm.controls) {
-        //   this.surveyForm.controls[i].markAsDirty();
-        //   this.surveyForm.controls[i].updateValueAndValidity();
-        // }
-        // const data = this.surveyForm.value;
-        // if (this.surveyForm.status === 'VALID') {
-        //     // this.pointItem[0].dissatisfaction = this.surveyForm.get('dissatisfaction').value;
-        //     this.pointItem[0].name = this.surveyForm.get('name').value;
-        //     this.pointItem[0].lng = this.surveyForm.get('lng').value;
-        //     this.pointItem[0].lat = this.surveyForm.get('lat').value;
-        //     this.pointItem[0].remark = this.surveyForm.get('remark').value;
-        //     const postData = {
-        //         data: this.pointItem,
-        //     };
-        //     console.log(postData);
-        //     this.httpService.updateAddress(postData).subscribe((r: any) => {
-        //         this.isVisible = false;
-        //         if (r.code === 200) {
-        //         this.modalService.success({ nzTitle: '保存成功！' });
-        //         // this.getTitleList();
-        //         } else {
-        //         this.modalService.error({ nzTitle: '保存失败！' });
-        //         }
-        //     });
-        // }
-    }
     handleCancel() {
         this.isVisible = false;
-        this.surveyForm.reset();
     }
-    sales() {
+    handleOk() {
+        this.isVisible = false;
+        this.httpService.putgoods(
+            {
+                goodsId: this.id, // 商品id
+                type: 'SALES', // 出入库类型
+                number: Number(this.saleItem.number), // 入库数量
+                activity_id: this.activity, // 折扣
+                customer_name: this.saleItem.customer_name, // 客户id
+                customer_phone: this.saleItem.customer_phone, // 客户id
+            }
+        ).subscribe((r: any) => {
+            this.isVisible = false;
+            this.modalService.success({
+                nzTitle: '出售商品成功',
+            });
+            console.log('====>selectCoselectCompanympany', r);
+        }, err => this.err(err));
+    }
+    sales(data) {
         this.isVisible = true;
+        this.id = data.id;
+        this.title = '商品销售';
+        this.name = data.name;
+        this.size = data.size;
+        this.companyName = data.company.companyName;
+        this.type = data.goodType.type;
+        this.price = data.price;
     }
 }

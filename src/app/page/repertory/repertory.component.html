@@ -1,40 +1,40 @@
 <div class="page">
     <div class="top"></div>
-    <button (click)="sendMessageToserver()">点击发送webSocket消息</button>
+    <!-- <button (click)="sendMessageToserver()">点击发送webSocket消息</button> -->
     <div class="card-container">
         <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
             <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name ">
                 <div class="serch-print">
                     <div>商品分类
-                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
-                            <nz-option *ngFor="let option of selectGoods" [nzLabel]="option.label" [nzValue]="option.label">
+                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="searchModule.goodType" nzAllowClear>
+                            <nz-option *ngFor="let option of selectType" [nzLabel]="option.type" [nzValue]="option.id">
                             </nz-option>
                         </nz-select>
                     </div>
                     <div>商品名称
-                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
-                            <nz-option *ngFor="let option of selectGoods" [nzLabel]="option.label" [nzValue]="option.label">
-                            </nz-option>
-                        </nz-select>
+                        <input nz-input style="width: 200px;height: 30px;" placeholder="商品名称" [(ngModel)]="searchModule.name" />
                     </div>
                     <div>生产厂家
-                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="goods" nzAllowClear>
-                            <nz-option *ngFor="let option of selectGoods" [nzLabel]="option.label" [nzValue]="option.label">
+                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="searchModule.company" nzAllowClear>
+                            <nz-option *ngFor="let option of selectCompany" [nzLabel]="option.companyName" [nzValue]="option.id">
                             </nz-option>
                         </nz-select>
                     </div>
-                    <div *ngIf="tab.index == 1">进货日期
-                        <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                    <div *ngIf="tab.index == 1">操作日期
+                        <nz-date-picker [(ngModel)]="searchModule.fromDate" (ngModelChange)="onChange($event)"></nz-date-picker>至
+                        <nz-date-picker [(ngModel)]="searchModule.toDate" (ngModelChange)="onChange($event)"></nz-date-picker>
                     </div>
-                    <div *ngIf="tab.index == 1">入库分类
-                        <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+                    <div *ngIf="tab.index == 1">出入库分类
+                        <nz-select class="common-select" style="width: 200px;height: 30px;" 
+                        [(ngModel)]="type" (ngModelChange)="changeType()" nzAllowClear>
+                            <nz-option *ngFor="let option of selectTypeList" [nzLabel]="option.label" [nzValue]="option.value">
+                            </nz-option>
+                        </nz-select>
+                        <!-- <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker> -->
                     </div>
-                    <div *ngIf="tab.index == 2">出库分类
+                    <!-- <div *ngIf="tab.index == 2">出库分类
                         <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
-                    </div>
-                    <div *ngIf="tab.index == 2">退货日期
-                        <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
-                    </div>
+                    </div> -->
                     <div *ngIf="tab.index !== 0">
                         <button nz-button (click)="exportForm()" nzType="primary">导出表格</button>
                     </div>
@@ -44,19 +44,29 @@
                     <div>
                         <button nz-button (click)="clear()" nzType="default">重置</button>
                     </div>
+                    <!-- <div *ngIf="tab.index == 0">设置库存预警
+                        <input type="text">
+                        <button nz-button (click)="clear()" nzType="primary">确定</button>
+                    </div> -->
                 </div>
                 <div class="search-table" *ngIf="tab.index == 0">
-                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
-                        [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
-                        (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
+                    <div class="print">
+                        <button (click)="setNew(tab.index)">
+                            <!-- <i nz-icon [nzType]="'plus'"></i> -->
+                            <span>新增</span>
+                        </button>
+                    </div>
+                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="list" [nzPageIndex]='nowPage' [nzTotal]="_total" [nzPageSize]="10"
+                        (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()" (nzPageIndexChange)="pageChange($event)"
+                        [nzLoading]="loading">
                         <thead class="table-thead">
                             <tr>
                                 <!-- // 商品分类:欧式、中式；商家名称，代码；商品基本信息：名称、代码、生产厂家、
 尺寸、颜色、生产日期，进销存（补货提示，商品降价促销），利润结算等功能。 -->
-                                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
-                                    (nzCheckedChange)="checkAll($event)"></th>
                                 <th>商品分类</th>
                                 <th>商品名称</th>
+                                <th>商品规格</th>
+                                <th>销售价格</th>
                                 <th>生产厂家</th>
                                 <th>库存量</th>
                                 <th>库存预警（最低库存量）</th>
@@ -64,19 +74,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
+                            <tr *ngFor="let data of rowSelectionTable.data">
+                                <td>{{data?.goodType?.type}}</td>
+                                <td>{{data?.name}}</td>
+                                <td>{{data?.size}}</td>
+                                <td>{{data?.price}}</td>
+                                <td>{{data?.company?.companyName}}</td>
+                                <td>{{data?.number}}</td>
+                                <td>{{data?.minNumber}}</td>
                                 <td>
-                                    <a (click)="in(tab.index)">
+                                    <a (click)="in(tab.index, data)">
                                         入库
                                     </a>&nbsp;&nbsp;
-                                    <a (click)="out(tab.index)">
+                                    <a (click)="out(tab.index, data)">
                                         出库
+                                    </a>
+                                    &nbsp;&nbsp;
+                                    <a (click)="editPerson(data)">
+                                        编辑
                                     </a>
                                 </td>
                             </tr>
@@ -84,69 +99,31 @@
                     </nz-table>
                 </div>
                 <div class="search-table" *ngIf="tab.index == 1">
-                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
+                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="inOutList" [nzPageIndex]='nowPage' [nzTotal]="_total"
                         [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
                         (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
                         <thead class="table-thead">
                             <tr>
-                                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
-                                    (nzCheckedChange)="checkAll($event)"></th>
+                                <th>供应商名称</th>
                                 <th>商品分类</th>
                                 <th>商品名称</th>
-                                <th>进货数量</th>
-                                <th>进货日期</th>
-                                <th>进货编号</th>
-                                <th>进货单价</th>
-                                <th>供应商名称</th>
-                                <th>进货分类</th>
+                                <th>{{EType[type]}}数量</th>
+                                <th>{{EType[type]}}日期</th>
+                                <th>{{EType[type]}}单价</th>
+                                <th>出入库分类</th>
                                 <th>操作人</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                            </tr>
-                        </tbody>
-                    </nz-table>
-                </div>
-                <div class="search-table" *ngIf="tab.index == 2">
-                    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
-                        [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()"
-                        (nzPageIndexChange)="pageChange($event)" [nzLoading]="loading">
-                        <thead class="table-thead">
-                            <tr>
-                                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
-                                    (nzCheckedChange)="checkAll($event)"></th>
-                                <th>商品分类</th>
-                                <th>商品名称</th>
-                                <th>供应商名称</th>
-                                <th>出库数量</th>
-                                <th>出库单价</th>
-                                <th>出库日期</th>
-                                <th>出库分类</th>
-                                <th>操作人</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td nzShowCheckbox (nzCheckedChange)="refreshStatus()"></td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
+                            <tr *ngFor="let data of rowSelectionTable.data">
+                                <td>{{data?.companys?.companyName}}</td>
+                                <td>{{data?.goodsType ? data?.goodsType : '--'}}</td>
+                                <td>{{data?.goodsName}}</td>
+                                <td>{{data?.number ? data?.number : '--'}}</td>
+                                <td>{{data?.date}}</td>
+                                <td>{{data?.price}}</td>
+                                <td>{{EType[data?.type]}}</td>
+                                <td>{{data?.staff?.userName}}</td>
                             </tr>
                         </tbody>
                     </nz-table>
@@ -155,75 +132,85 @@
         </nz-tabset>
     </div>
 </div>
-<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
-    (nzOnCancel)="handleCancel()">
-    <form nz-form [formGroup]="surveyForm" (ngSubmit)="submitForm()">
-        <ng-template #modalTitle>
-            {{title}}
-        </ng-template>
-        <!-- <input type="hidden" formControlName="id" id="id"> -->
-        <ng-template #modalContent>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">商品分类</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">商品名称</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">生产厂家</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">进货数量</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">进货日期</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">进货单价</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">进货总价</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">操作人</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-        </ng-template>
-        <ng-template #modalFooter>
-            <button nz-button nzType="primary" *ngIf="!isAdd" (click)="submitForm()" [nzLoading]="isConfirmLoading">保存</button>
-            <!-- <button nz-button nzType="primary" *ngIf="isAdd" (click)="submitForm('add')" [nzLoading]="isConfirmLoading">添加</button>// -->
-            <button nz-button nzType="default" class="ant-cancel" (click)="handleCancel()">取消</button>
-        </ng-template>
-    </form>
+<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="title" [nzContent]="modalContent" [nzFooter]="modalFooter"
+    (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk(key)">
+    <div>
+        <em>商品分类</em>
+        <span *ngIf="!isadd && !isedit">{{type}}</span>
+        <nz-select *ngIf="isadd || isedit" class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="typeId" nzAllowClear>
+            <nz-option *ngFor="let option of selectType" [nzLabel]="option.type" [nzValue]="option.id">
+            </nz-option>
+        </nz-select>
+    </div>
+    <div>
+        <em>商品名称</em>
+        <span *ngIf="!isadd && !isedit">{{name}}</span>
+        <input type="text" *ngIf="isadd || isedit" [(ngModel)]="name">
+    </div>
+    <div>
+        <em>商品规格</em>
+        <span *ngIf="!isadd && !isedit">{{size}}</span>
+        <input type="text" *ngIf="isadd || isedit" [(ngModel)]="size">
+    </div>
+    <div>
+        <em>生产厂家</em>
+        <span *ngIf="!isadd && !isedit">{{companyName}}</span>
+        <!-- <input type="text" *ngIf="isadd || isedit" [(ngModel)]="ordPws"> -->
+        <nz-select *ngIf="isadd || isedit" class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="companyId" nzAllowClear>
+            <nz-option *ngFor="let option of selectCompany" [nzLabel]="option.companyName" [nzValue]="option.id">
+            </nz-option>
+        </nz-select>
+    </div>
+    <div *ngIf="!isadd && !isedit">
+        <em>{{select}}</em>
+        <span>{{selectstatus}}</span>
+    </div>
+    <div *ngIf="isinselect && !isadd && !isedit">
+        <em>进货单价</em>
+        <input type="text" [(ngModel)]="price">
+    </div>
+    <div *ngIf="!isadd">
+        <em>{{perprice}}</em>
+        <input type="text" *ngIf="!isoutselect" [(ngModel)]="salesPrice">
+        <span *ngIf="isoutselect">{{price}}</span>
+    </div>
+    <div *ngIf="isedit">
+        <em>设置库存预警</em>
+        <input type="text" [(ngModel)]="minNumber">
+    </div>
+    <div *ngIf="!isadd && !isedit">
+        <em>{{numbers}}</em>
+        <input type="text" [(ngModel)]="number">
+    </div>
+    <div *ngIf="!isadd && !isedit">
+        <em>{{totalprice}}</em>
+        <span>算的</span>
+    </div>
+    <div *ngIf="!isadd && !isedit">
+        <em>{{time}}</em>
+        <span>展示的</span>
+    </div>
+    <div *ngIf="isoutselect && !isadd">
+        <em>活动名称</em>
+        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" nzAllowClear>
+            <nz-option *ngFor="let option of activityList" [nzLabel]="option.name" [nzValue]="option.id">
+            </nz-option>
+        </nz-select>
+    </div>
+    <div *ngIf="isoutselect && !isadd">
+        <em>实际售价</em>
+        <span>展示</span>
+    </div>
+    <div *ngIf="isoutselect && !isadd">
+        <em>客户名称</em>
+        <input type="text" [(ngModel)]='customer_name'>
+    </div>
+    <div *ngIf="isoutselect && !isadd">
+        <em>联系电话</em>
+        <input type="text" [(ngModel)]='customer_phone'>
+    </div>
+    <div *ngIf="!isadd">
+        <em>操作人</em>
+        <span>默认登陆人</span>
+    </div>
 </nz-modal>

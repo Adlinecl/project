@@ -1,112 +1,91 @@
 <div class="sales">
-    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
-        [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()" (nzPageIndexChange)="pageChange($event)"
+    <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="list" [nzPageIndex]='nowPage' [nzTotal]="_total" [nzPageSize]="10"
+        (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()" (nzPageIndexChange)="pageChange($event)"
         [nzLoading]="loading">
         <thead class="table-thead">
             <tr>
-                <th nzShowCheckbox style="border-left: 1px solid #DCDCDC;" [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="indeterminate"
-                    (nzCheckedChange)="checkAll($event)"></th>
+
                 <th>商品名称</th>
                 <th>生产厂家</th>
-                <th>销售价格</th>
-                <th>折扣</th>
-                <th>折扣单价</th>
-                <th>实际售价</th>
+                <th>商品规格</th>
+                <th>商品类型</th>
+                <th>销售单价</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td (nzCheckedChange)="refreshStatus()"></td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
+            <tr *ngFor="let data of rowSelectionTable.data">
+                <td>{{data?.name}}</td>
+                <td>{{data?.company?.companyName}}</td>
+                <td>{{data?.size}}</td>
+                <td>{{data?.goodType?.type}}</td>
+                <td>{{data?.price}}</td>
                 <td>
-                    <a (click)="sales()">出售</a>
+                    <a (click)="sales(data)">出售</a>
                 </td>
             </tr>
         </tbody>
     </nz-table>
 </div>
-<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
-    (nzOnCancel)="handleCancel()">
-    <form nz-form [formGroup]="surveyForm" (ngSubmit)="submitForm()">
-        <ng-template #modalTitle>
-            {{title}}
-        </ng-template>
-        <!-- <input type="hidden" formControlName="id" id="id"> -->
-        <ng-template #modalContent>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">商品名称</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">生产厂家</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">实际售价</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">销售数量</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">销售总价</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">客户名称</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">联系电话</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">操作人</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">联系电话</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-        </ng-template>
-        <ng-template #modalFooter>
-            <button nz-button nzType="primary" *ngIf="!isAdd" (click)="submitForm()" [nzLoading]="isConfirmLoading">保存</button>
-            <!-- <button nz-button nzType="primary" *ngIf="isAdd" (click)="submitForm('add')" [nzLoading]="isConfirmLoading">添加</button>// -->
-            <button nz-button nzType="default" class="ant-cancel" (click)="handleCancel()">取消</button>
-        </ng-template>
-    </form>
+<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="title" [nzContent]="modalContent" [nzFooter]="modalFooter"
+    (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <div>
+        <em>商品分类</em>
+        <span>{{type}}</span>
+    </div>
+    <div>
+        <em>商品名称</em>
+        <span>{{name}}</span>
+    </div>
+    <div>
+        <em>商品规格</em>
+        <span>{{size}}</span>
+    </div>
+    <div>
+        <em>生产厂家</em>
+        <span>{{companyName}}</span>
+    </div>
+    <div>
+        <em>出库分类</em>
+        <span>销售</span>
+    </div>
+    <div>
+        <em>销售单价</em>
+        <span>{{price}}</span>
+    </div>
+    <div>
+        <em>销售数量</em>
+        <input type="text" [(ngModel)]="saleItem.number">
+    </div>
+    <div>
+        <em>销售总价</em>
+        <span>展示</span>
+    </div>
+    <div>
+        <em>销售日期</em>
+        <span>展示</span>
+    </div>
+    <div>
+        <em>活动名称</em>
+        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" nzAllowClear>
+            <nz-option *ngFor="let option of activityList" [nzLabel]="option.name" [nzValue]="option.id">
+            </nz-option>
+        </nz-select>
+    </div>
+    <div>
+        <em>实际售价</em>
+        <span>展示</span>
+    </div>
+    <div>
+        <em>客户名称</em>
+        <input type="text" [(ngModel)]="saleItem.customer_name">
+    </div>
+    <div>
+        <em>联系电话</em>
+        <input type="text" [(ngModel)]="saleItem.customer_phone">
+    </div>
+    <div>
+        <em>操作人</em>
+        <span>默认登陆人</span>
+    </div>
 </nz-modal>

@@ -6,7 +6,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 @Component({
     selector: 'app-sales',
     templateUrl: './sales.component.html',
-    styleUrls: ['./sales.component.css']
+    styleUrls: ['./sales.component.less']
 })
 export class SalesComponent implements OnInit {
     orderList = [];
@@ -14,13 +14,33 @@ export class SalesComponent implements OnInit {
     // tslint:disable-next-line:variable-name
     _total = 100;
     listOfDisplayData: any[] = [];
-    mapOfCheckedId: { [ key: string ]: boolean } = {};
+    mapOfCheckedId: { [key: string]: boolean } = {};
     isAllDisplayDataChecked = false;
     isIndeterminate = false;
     allChecked = false;
     isVisible = false;
     surveyForm: FormGroup;
     title;
+    sale = {
+        goodsName: '',
+        companyName: '',
+        price: '',
+        number: '',
+        totalPrice: '',
+        discount: '',
+        confirmPrice: '',
+        // returnNum: '',
+        returnPrice: '',
+        createDate: '',
+        customerName: '',
+        customerPhone: '',
+        staffName: '',
+        staffPhone: '',
+        status: '',
+        orderId: '',
+        returnNum: '',
+        goodsId: '',
+    };
     constructor(private modalService: NzModalService,
                 public httpService: HttpService,
                 private fb: FormBuilder, ) { }
@@ -29,6 +49,22 @@ export class SalesComponent implements OnInit {
         this.surveyForm = this.fb.group({
             name: [null, [Validators.required]],
         });
+        this.getLis();
+    }
+    err = function catchError(err) {
+        console.log('err', err);
+        if (err) {
+            this.modalService.error({
+                nzTitle: err.error.message ? err.error.message : '操作失败',
+            });
+            return;
+        }
+    };
+    getLis() {
+        this.httpService.orderList().subscribe((r: any) => {
+            this.orderList = r;
+            console.log(this.orderList);
+        }, err => this.err(err));
     }
     refreshStatus(): void {
         this.isAllDisplayDataChecked = this.listOfDisplayData.every(item =>
@@ -46,52 +82,48 @@ export class SalesComponent implements OnInit {
         this.listOfDisplayData.forEach(item => this.mapOfCheckedId[item.id] = value);
         this.refreshStatus();
     }
-    returnSales() {
+    returnSales(data) {
         this.isVisible = true;
         this.title = '退货信息';
-    }
-    getSurveyInfo(id) {
-        // this.httpService.findAddress(id).subscribe( (r: any) => {
-        //     this.pointItem = r.data;
-        //     this.surveyForm.get('id').setValue(r.data[0].id);
-        //     this.surveyForm.get('name').setValue(r.data[0].name);
-        //     this.surveyForm.get('lng').setValue(r.data[0].lng);
-        //     this.surveyForm.get('lat').setValue(r.data[0].lat);
-        //     this.surveyForm.get('remark').setValue(r.data[0].remark);
-        //     this.orderNum = r.data.orderNum;
-        // });
-    }
-    submitForm() {
-        // this.postPoints.data = [];
-        // // tslint:disable-next-line: forin
-        // for (const i in this.surveyForm.controls) {
-        //   this.surveyForm.controls[i].markAsDirty();
-        //   this.surveyForm.controls[i].updateValueAndValidity();
-        // }
-        // const data = this.surveyForm.value;
-        // if (this.surveyForm.status === 'VALID') {
-        //     // this.pointItem[0].dissatisfaction = this.surveyForm.get('dissatisfaction').value;
-        //     this.pointItem[0].name = this.surveyForm.get('name').value;
-        //     this.pointItem[0].lng = this.surveyForm.get('lng').value;
-        //     this.pointItem[0].lat = this.surveyForm.get('lat').value;
-        //     this.pointItem[0].remark = this.surveyForm.get('remark').value;
-        //     const postData = {
-        //         data: this.pointItem,
-        //     };
-        //     console.log(postData);
-        //     this.httpService.updateAddress(postData).subscribe((r: any) => {
-        //         this.isVisible = false;
-        //         if (r.code === 200) {
-        //         this.modalService.success({ nzTitle: '保存成功！' });
-        //         // this.getTitleList();
-        //         } else {
-        //         this.modalService.error({ nzTitle: '保存失败！' });
-        //         }
-        //     });
-        // }
+        this.sale = {
+            goodsName: data.goodsName,
+            companyName: data.companyName,
+            price: data.price,
+            number: data.number,
+            totalPrice: data.totalPrice,
+            discount: data.discount,
+            confirmPrice: data.confirmPrice,
+            // returnNum: data.,
+            returnPrice: data.returnPrice,
+            createDate: data.createDate,
+            customerName: data.customerName,
+            customerPhone: data.customerPhone,
+            staffName: data.staffName,
+            staffPhone: data.staffPhone,
+            status: data.status,
+            orderId: data.id,
+            returnNum: data.returnNum,
+            goodsId: data.goodsId,
+        };
     }
     handleCancel() {
         this.isVisible = false;
-        this.surveyForm.reset();
+    }
+    handleOk() {
+        this.httpService.putgoods(
+            {
+                orderId: this.sale.orderId,
+                returnNum: this.sale.returnNum,
+                goodsId: this.sale.goodsId,
+                type: 'RETURN',
+            }
+        ).subscribe((r: any) => {
+            if (r === 'success') {
+                this.isVisible = false;
+                this.modalService.success({
+                    nzTitle: '商品退货成功',
+                });
+            }
+        }, err => this.err(err));
     }
 }

@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
               private modalService: NzModalService,
               private fb: FormBuilder,
               private router: Router,
-               ) { }
+  ) { }
   // enterParams = {
   //   userName: '',
   //   password: '',
@@ -66,6 +66,7 @@ export class LoginComponent implements OnInit {
       this.modalService.error({
         nzTitle: err.error.message ? err.error.message : '请重新登录！',
       });
+      this.router.navigate(['login']);
       return;
     }
   };
@@ -76,17 +77,19 @@ export class LoginComponent implements OnInit {
       this.validateForm.controls[i].updateValueAndValidity();
     }
     const data = this.validateForm.value;
-    console.log(data);
-    this.router.navigate(['page'], { queryParams: { userName: this.validateForm.value.name } });
+    // console.log(data);
+    // this.router.navigate(['page'], { queryParams: { userName: this.validateForm.value.name } });
     //
     if (this.validateForm.status === 'VALID') {
       // this.enter();
+      // this.router.navigate(['page']);
       this.httpService.enterIn(data).subscribe((r: any) => {
-        console.log(data, r);
-        localStorage.setItem('token', JSON.stringify(r.token));
-        localStorage.setItem('userName', JSON.stringify(r.userName));
-          // this.router.navigate(['page']);
-      }, err => {this.err(err); });
+          console.log(data, r);
+          localStorage.setItem('token', JSON.stringify(r.token));
+          // localStorage.setItem('userName', JSON.stringify(r.userName));
+          localStorage.setItem('name', JSON.stringify(r.name));
+          this.router.navigate(['page']);
+      }, err => { this.err(err); });
     }
   }
   // enter() {

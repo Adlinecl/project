@@ -116,11 +116,11 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let data of rowSelectionTable.data">
-                                <td>{{data?.companys?.companyName}}</td>
+                                <td>{{data?.companys?.companyName ? data?.companys?.companyName : '--'}}</td>
                                 <td>{{data?.goodsType ? data?.goodsType : '--'}}</td>
                                 <td>{{data?.goodsName}}</td>
                                 <td>{{data?.number ? data?.number : '--'}}</td>
-                                <td>{{data?.date}}</td>
+                                <td>{{data?.date | date: 'yyyy-MM-dd'}}</td>
                                 <td>{{data?.price}}</td>
                                 <td>{{EType[data?.type]}}</td>
                                 <td>{{data?.staff?.userName}}</td>
@@ -167,7 +167,7 @@
     </div>
     <div *ngIf="isinselect && !isadd && !isedit">
         <em>进货单价</em>
-        <input type="text" [(ngModel)]="price">
+        <input type="text" [(ngModel)]="price" (ngModelChange)="changeSaleNum(number)">
     </div>
     <div *ngIf="!isadd">
         <em>{{perprice}}</em>
@@ -180,26 +180,27 @@
     </div>
     <div *ngIf="!isadd && !isedit">
         <em>{{numbers}}</em>
-        <input type="text" [(ngModel)]="number">
+        <input type="text" [(ngModel)]="number" (ngModelChange)="changeSaleNum(number)">
     </div>
     <div *ngIf="!isadd && !isedit">
         <em>{{totalprice}}</em>
-        <span>算的</span>
+        <span>{{inprice}}</span>
     </div>
     <div *ngIf="!isadd && !isedit">
         <em>{{time}}</em>
-        <span>展示的</span>
+        <span>{{showTime}}</span>
     </div>
     <div *ngIf="isoutselect && !isadd">
         <em>活动名称</em>
-        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" nzAllowClear>
+        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" 
+        (ngModelChange)="changeSaleDiscount(activity)" nzAllowClear>
             <nz-option *ngFor="let option of activityList" [nzLabel]="option.name" [nzValue]="option.id">
             </nz-option>
         </nz-select>
     </div>
     <div *ngIf="isoutselect && !isadd">
         <em>实际售价</em>
-        <span>展示</span>
+        <span>{{confirmPrice}}</span>
     </div>
     <div *ngIf="isoutselect && !isadd">
         <em>客户名称</em>
@@ -211,6 +212,6 @@
     </div>
     <div *ngIf="!isadd">
         <em>操作人</em>
-        <span>默认登陆人</span>
+        <span>{{staffName}}</span>
     </div>
 </nz-modal>

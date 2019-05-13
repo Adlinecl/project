@@ -60,10 +60,10 @@
     <div><em>销售日期</em><span>{{sale.createDate | date: 'yyyy-MM-dd'}}</span></div>
     <div><em>折扣</em><span>{{sale.discount}}</span></div>
     <div><em>实销总价</em><span>{{sale.confirmPrice}}</span></div>
-    <div><em>退货数量</em><input type="text" [(ngModel)]="sale.returnNum"></div>
-    <div><em>退货总价</em><span>自己算</span></div>
-    <div><em>退货日期</em><span>展示默认今天</span></div>
+    <div><em>退货数量</em><input type="text" [(ngModel)]="sale.returnNum" (ngModelChange)="inputChange(sale.returnNum)"></div>
+    <div><em>退货总价</em><span>{{returnPrice ? returnPrice : '--'}}</span></div>
+    <div><em>退货日期</em><span>{{showTime}}</span></div>
     <div><em>客户名称</em><span>{{sale.customerName}}</span></div>
     <div><em>联系电话</em><span>{{sale.customerPhone}}</span></div>
-    <div><em>操作人</em><span>默认登陆人</span></div>
+    <div><em>操作人</em><span>{{staffName}}</span></div>
 </nz-modal>

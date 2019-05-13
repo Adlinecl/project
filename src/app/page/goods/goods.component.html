@@ -9,6 +9,7 @@
                 <th>生产厂家</th>
                 <th>商品规格</th>
                 <th>商品类型</th>
+                <th>库存量</th>
                 <th>销售单价</th>
                 <th>操作</th>
             </tr>
@@ -19,6 +20,7 @@
                 <td>{{data?.company?.companyName}}</td>
                 <td>{{data?.size}}</td>
                 <td>{{data?.goodType?.type}}</td>
+                <td>{{data?.number}}</td>
                 <td>{{data?.price}}</td>
                 <td>
                     <a (click)="sales(data)">出售</a>
@@ -55,26 +57,27 @@
     </div>
     <div>
         <em>销售数量</em>
-        <input type="text" [(ngModel)]="saleItem.number">
+        <input type="text" [(ngModel)]="saleItem.number" (ngModelChange)="changeSaleNum(saleItem.number)">
     </div>
     <div>
         <em>销售总价</em>
-        <span>展示</span>
+        <span>{{salesPrice ? salesPrice : '--'}}</span>
     </div>
     <div>
         <em>销售日期</em>
-        <span>展示</span>
+        <span>{{showTime}}</span>
     </div>
     <div>
         <em>活动名称</em>
-        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" nzAllowClear>
+        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" 
+        (ngModelChange)="changeSaleDiscount(activity)" nzAllowClear>
             <nz-option *ngFor="let option of activityList" [nzLabel]="option.name" [nzValue]="option.id">
             </nz-option>
         </nz-select>
     </div>
     <div>
         <em>实际售价</em>
-        <span>展示</span>
+        <span>{{confirmPrice ? confirmPrice : '--'}}</span>
     </div>
     <div>
         <em>客户名称</em>
@@ -86,6 +89,6 @@
     </div>
     <div>
         <em>操作人</em>
-        <span>默认登陆人</span>
+        <span>{{staffName}}</span>
     </div>
 </nz-modal>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
 import { HttpService } from '../../http.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import * as momentNs from 'moment';
+const moment = momentNs;
 
 @Component({
     selector: 'app-sales',
@@ -21,6 +23,7 @@ export class SalesComponent implements OnInit {
     isVisible = false;
     surveyForm: FormGroup;
     title;
+    returnPrice;
     sale = {
         goodsName: '',
         companyName: '',
@@ -29,7 +32,7 @@ export class SalesComponent implements OnInit {
         totalPrice: '',
         discount: '',
         confirmPrice: '',
-        // returnNum: '',
+        // returnNum: 0,
         returnPrice: '',
         createDate: '',
         customerName: '',
@@ -38,18 +41,28 @@ export class SalesComponent implements OnInit {
         staffPhone: '',
         status: '',
         orderId: '',
-        returnNum: '',
+        returnNum: 0,
         goodsId: '',
     };
+    staffName;
+    showTime = moment().format('YYYY-MM-DD');
     constructor(private modalService: NzModalService,
-                public httpService: HttpService,
-                private fb: FormBuilder, ) { }
+        public httpService: HttpService,
+        private fb: FormBuilder, ) { }
 
     ngOnInit() {
         this.surveyForm = this.fb.group({
             name: [null, [Validators.required]],
         });
         this.getLis();
+        this.getUserName();
+    }
+    getUserName() {
+        this.staffName = localStorage.getItem('name');
+        if (this.staffName) {
+            this.staffName = JSON.parse(this.staffName);
+            console.log('staffName', this.staffName);
+        }
     }
     err = function catchError(err) {
         console.log('err', err);
@@ -60,6 +73,9 @@ export class SalesComponent implements OnInit {
             return;
         }
     };
+    addMoney(num) {
+        return this.returnPrice = Number(Number(this.sale.confirmPrice) / Number(this.sale.number) * Number(num)).toFixed(2);
+    }
     getLis() {
         this.httpService.orderList().subscribe((r: any) => {
             this.orderList = r;
@@ -102,12 +118,22 @@ export class SalesComponent implements OnInit {
             staffPhone: data.staffPhone,
             status: data.status,
             orderId: data.id,
-            returnNum: data.returnNum,
+            // returnNum: data.returnNum,
+            returnNum: 0,
             goodsId: data.goodsId,
         };
     }
     handleCancel() {
         this.isVisible = false;
+    }
+    inputChange(num) {
+        if (this.sale.number < num) {
+            this.modalService.info({
+                nzTitle: '退货数量有误，请重新输入',
+            });
+        } else {
+            this.addMoney(num);
+        }
     }
     handleOk() {
         this.httpService.putgoods(

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
 import { HttpService } from '../../http.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as momentNs from 'moment';
+const moment = momentNs;
 
 @Component({
     selector: 'app-goods',
@@ -35,9 +37,16 @@ export class GoodsComponent implements OnInit {
     name;
     size;
     id;
-    constructor(private modalService: NzModalService,
-                public httpService: HttpService,
-                private fb: FormBuilder, ) { }
+    staffName;
+    showTime = moment().format('YYYY-MM-DD');
+    salesPrice;
+    confirmPrice;
+    constructor
+        (
+        private modalService: NzModalService,
+        public httpService: HttpService,
+        private fb: FormBuilder,
+    ) { }
 
     ngOnInit() {
         this.surveyForm = this.fb.group({
@@ -45,6 +54,14 @@ export class GoodsComponent implements OnInit {
         });
         this.getList();
         this.getActivityList();
+        this.getUserName();
+    }
+    getUserName() {
+        this.staffName = localStorage.getItem('name');
+        if (this.staffName) {
+            this.staffName = JSON.parse(this.staffName);
+            console.log('staffName', this.staffName);
+        }
     }
     err = function catchError(err) {
         console.log('err', err);
@@ -84,6 +101,27 @@ export class GoodsComponent implements OnInit {
     }
     handleCancel() {
         this.isVisible = false;
+    }
+    addMoney(num, sales?: number) {
+        return this.salesPrice = (this.price * num).toFixed(2);
+    }
+    changeSaleNum(num) {
+        this.addMoney(num);
+        this.confirmPrice = this.salesPrice;
+    }
+    changeSaleDiscount(event) {
+        console.log(event);
+        let discount;
+        if (event) {
+            discount =  this.activityList.filter(item => item.id === event).map((key) => {
+                return Number(key.discount * 0.1).toFixed(2);
+            });
+            // tslint:disable-next-line:no-unused-expression));
+            console.log(discount, this.salesPrice);
+            this.confirmPrice = this.addMoney(discount, this.salesPrice);
+        } else if (!event) {
+            this.confirmPrice = this.salesPrice;
+        }
     }
     handleOk() {
         this.isVisible = false;

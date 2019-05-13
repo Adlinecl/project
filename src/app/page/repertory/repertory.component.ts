@@ -6,6 +6,8 @@ import { WebSocketService } from '../../web-socket.service';
 import { UserSocketService } from '../../use-socket.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EType } from '../../enum-data';
+import * as momentNs from 'moment';
+const moment = momentNs;
 
 @Component({
     selector: 'app-repertory',
@@ -38,14 +40,6 @@ export class RepertoryComponent implements OnInit {
             index: 1,
             name: '出入库列表',
         },
-        // {
-        //     index: 2,
-        //     name: '出库列表',
-        // },
-        // {
-        //     index: 2,
-        //     name: '销售',
-        // },
     ];
     searchList: {
         name: '',
@@ -113,7 +107,12 @@ export class RepertoryComponent implements OnInit {
         toDate: '',
         type: '',
     };
-    constructor(private modalService: NzModalService,
+    staffName;
+    showTime = moment().format('YYYY-MM-DD');
+    inprice;
+    confirmPrice;
+    constructor(
+        private modalService: NzModalService,
         private wsService: WebSocketService,
         private usService: UserSocketService,
         private notification: NzNotificationService,
@@ -129,6 +128,7 @@ export class RepertoryComponent implements OnInit {
         //         err => console.log(err),
         //         () => console.log('流已经结束')
         //     );
+        // this.showTime = new Date();
         this.surveyForm = this.fb.group({
             name: [null, [Validators.required]],
             selectstatus: [null, [Validators.required]],
@@ -146,11 +146,19 @@ export class RepertoryComponent implements OnInit {
         this.getCompany();
         this.getActivityList();
         this.getList();
+        this.getUserName();
     }
     // sendMessageToserver() {
     //     // this.wsService.sendMessage('Hello from client');
     //     this.usService.messages.next(this.message);
     // }
+    getUserName() {
+        this.staffName = localStorage.getItem('name');
+        if (this.staffName) {
+            this.staffName = JSON.parse(this.staffName);
+            console.log('staffName', this.staffName);
+        }
+    }
     getActivityList() {
         this.httpService.getactivitytype().subscribe((r: any) => {
             this.activityList = r;
@@ -273,6 +281,7 @@ export class RepertoryComponent implements OnInit {
             ).subscribe((r: any) => {
                 this.isVisible = false;
                 this.key = '';
+                this.getList();
                 this.modalService.success({
                     nzTitle: '添加商品成功',
                 });
@@ -291,10 +300,11 @@ export class RepertoryComponent implements OnInit {
                     companyId: this.companyId,
                     typeId: this.typeId,
                     price: this.salesPrice,
-                    minNumber: this.minNumber,
+                    minNum: Number(this.minNumber),
                 }
             ).subscribe((r: any) => {
                 this.isVisible = false;
+                this.getList();
                 this.modalService.success({
                     nzTitle: '编辑商品成功',
                 });
@@ -316,6 +326,7 @@ export class RepertoryComponent implements OnInit {
                 }
             ).subscribe((r: any) => {
                 this.isVisible = false;
+                this.getList();
                 this.modalService.success({
                     nzTitle: '入库商品成功',
                 });
@@ -333,19 +344,19 @@ export class RepertoryComponent implements OnInit {
                 }
             ).subscribe((r: any) => {
                 this.isVisible = false;
+                this.getList();
                 this.modalService.success({
                     nzTitle: '商品销售成功',
                 });
                 console.log('====>selectCoselectCompanympany', r);
             }, err => this.err(err));
         }
-        this.getList();
+        // this.getList();
     }
     handleCancel() {
         this.isVisible = false;
         // this.surveyForm.reset();
     }
-    exportForm() { }
     search() {
         if (this.currentTabIndex === 0) {
             this.httpService.findGoods(
@@ -356,13 +367,16 @@ export class RepertoryComponent implements OnInit {
                 console.log('====>777777', r);
             }, err => this.err(err));
         } else if (this.currentTabIndex === 1) {
+            this.searchModule.fromDate = this.dateFormat(this.searchModule.fromDate);
+            this.searchModule.toDate = this.dateFormat(this.searchModule.toDate, true);
             this.searchModule.type = this.type;
+            console.log('====>777777', this.searchModule);
+
             this.httpService.findTradingInfo(
                 this.searchModule
             ).subscribe((r: any) => {
                 // this.inOutList = r;
                 this.inOutList = r;
-                console.log('====>777777', r);
             }, err => this.err(err));
         }
     }
@@ -450,6 +464,54 @@ export class RepertoryComponent implements OnInit {
                 break;
             default:
                 break;
+        }
+    }
+    dateFormat(dateVal: Date | string, isEnd?: boolean) {
+        if (isEnd) {
+            return dateVal ? moment(dateVal).format('YYYY-MM-DD') + ' 23:59:59' : '';
+        } else {
+            return dateVal ? moment(dateVal).format('YYYY-MM-DD') + ' 00:00:00' : '';
+        }
+    }
+    onChange(event) { }
+    addMoney(num, sales?: number) {
+        return (this.price * num).toFixed(2);
+    }
+    changeSaleNum(num) {
+        this.inprice = this.addMoney(num);
+        this.confirmPrice = this.inprice;
+    }
+    changeSaleDiscount(event) {
+        console.log(event);
+        let discount;
+        if (event) {
+            discount = this.activityList.filter(item => item.id === event).map((key) => {
+                return Number(key.discount * 0.1).toFixed(2);
+            });
+            // tslint:disable-next-line:no-unused-expression));
+            console.log(discount, this.inprice);
+            this.confirmPrice = this.addMoney(discount, this.inprice);
+        } else if (!event) {
+            this.confirmPrice = this.inprice;
+        }
+    }
+    exportForm() {
+        let result;
+        this.searchModule.fromDate = this.dateFormat(this.searchModule.fromDate);
+        this.searchModule.toDate = this.dateFormat(this.searchModule.toDate, true);
+        this.searchModule.type = this.type;
+
+        this.httpService.submit(
+            this.searchModule
+        ).subscribe((r: any) => {
+            result = r;
+        }, err => this.err(err));
+        if (result) {
+            this.httpService.downlown(
+                result
+            ).subscribe((r: any) => {
+                console.log('==========>>>>>download', r);
+            }, err => this.err(err));
         }
     }
 }

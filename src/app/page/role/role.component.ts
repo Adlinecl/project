@@ -200,7 +200,7 @@ export class RoleComponent implements OnInit {
         console.log('err', err);
         if (err) {
             this.modalService.error({
-                nzTitle: '操作失败',
+                nzTitle: err.error.message ? err.error.message : '操作失败',
             });
             return;
         }
@@ -568,6 +568,12 @@ export class RoleComponent implements OnInit {
                         if (r === 'success') {
                             this.getActivityList();
                         }
+                    }, err => this.err(err));
+                }  else if (index === 3) {
+                    this.httpService.deleteRole(
+                        data.id
+                    ).subscribe((r: any) => {
+                        this.getRole();
                     }, err => this.err(err));
                 }
             },

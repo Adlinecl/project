@@ -60,6 +60,10 @@ export class HttpService {
         this.set();
         return this.http.get(`${this.indexUrl}/getRole`, { headers: this.httpHeader });
     }
+    deleteRole(id: string): Observable<any> {
+        this.set();
+        return this.http.get(`${this.indexUrl}/deleteRole/${id}`, { headers: this.httpHeader });
+    }
     logout(data: any): Observable<any> {
         this.set();
         return this.http.post(`${this.indexUrl}/logout`, data, { headers: this.httpHeader });
@@ -169,5 +173,21 @@ export class HttpService {
     getAccountInfo(data: any): Observable<any> {
         this.set();
         return this.http.post(`${this.indexUrl}/getAccountInfo`, data, { headers: this.httpHeader });
+    }
+    getAccountByStaff(data: any): Observable<any> {
+        this.set();
+        return this.http.post(`${this.indexUrl}/getAccountByStaff`, data, { headers: this.httpHeader });
+    }
+    getAccountInfoByStaff(data: any): Observable<any> {
+        this.set();
+        return this.http.post(`${this.indexUrl}/getAccountInfoByStaff`, data, { headers: this.httpHeader });
+    }
+    submit(data: any): Observable<any> {
+        this.set();
+        return this.http.post(`${this.indexUrl}/submit`, data, { headers: this.httpHeader });
+    }
+    downlown(url: string): Observable<any> {
+        // this.set();
+        return this.http.get(`${this.indexUrl}/export/${url}`, { headers: this.httpHeader });
     }
 }

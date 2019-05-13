@@ -25,8 +25,8 @@ export class BillComponent implements OnInit {
     pageSize = 10;
     total = 1;
     // loading = true;
+    sortName: string | null = null;
     sortValue: string | null = null;
-    sortKey: string | null = null;
     filterGender = [{ text: 'male', value: 'male' }, { text: 'female', value: 'female' }];
     searchGenderList: string[] = [];
     tabs = [
@@ -44,16 +44,83 @@ export class BillComponent implements OnInit {
     title;
     startDate = '';
     endDate = '';
-    constructor(private modalService: NzModalService,
-                public httpService: HttpService,
-                private fb: FormBuilder, ) { }
+    currentTabIndex = 0;
+    name;
+    staffId;
+    staffList = [];
+    money;
+    constructor(
+        private modalService: NzModalService,
+        public httpService: HttpService,
+        private fb: FormBuilder,
+    ) { }
 
     ngOnInit() {
         // this.surveyForm = this.fb.group({
         //     name: [null, [Validators.required]],
         // });
     }
-    tabChange() {}
+    getUserName() {
+        this.name = localStorage.getItem('name');
+        if (this.name) {
+            this.name = JSON.parse(this.name);
+            console.log('name', this.name);
+        }
+    }
+    tabChange(event, currentTabIndex) {
+        this.startDate = '';
+        this.endDate = '';
+        this.pageIndex = 1;
+        this.orderList = [];
+        this.money = 0;
+    }
+    err = function catchError(err) {
+        console.log('err', err);
+        if (err) {
+            this.modalService.error({
+                nzTitle: err.error.message ? err.error.message : '操作失败',
+            });
+            return;
+        }
+    };
+    addmoney(num) {
+        num += num;
+        return num;
+    }
+    search() {
+        this.startDate = this.dateFormat(this.startDate);
+        this.endDate = this.dateFormat(this.endDate, true);
+        if (this.startDate && this.endDate) {
+            if (this.currentTabIndex === 0) {
+                this.httpService.getAccountInfo(
+                    {
+                        startDate: this.startDate,
+                        endDate: this.endDate,
+                    }
+                ).subscribe((r: any) => {
+                    this.orderList = r;
+                    for (const item of r) {
+                        this.money = this.addmoney(item.profits);
+                    }
+                    console.log('====>startDatestartDatestartDatestartDate', r);
+                }, err => this.err(err));
+            } else if (this.currentTabIndex === 1) {
+                this.httpService.getAccountByStaff(
+                    {
+                        startDate: this.startDate,
+                        endDate: this.endDate,
+                    }
+                ).subscribe((r: any) => {
+                    this.orderList = r;
+                    console.log('====>startDatestartDatestartDatestartDate', r);
+                }, err => this.err(err));
+            }
+        } else {
+            this.modalService.warning({
+                nzTitle: '请选择时间区间',
+            });
+        }
+    }
     refreshStatus(): void {
         this.isAllDisplayDataChecked = this.listOfDisplayData.every(item =>
             this.mapOfCheckedId[item.id]);
@@ -71,50 +138,69 @@ export class BillComponent implements OnInit {
         this.refreshStatus();
     }
     sort(sort: { key: string; value: string }): void {
-        this.sortKey = sort.key;
+        this.sortName = sort.key;
         this.sortValue = sort.value;
         this.searchData();
     }
     searchData(reset: boolean = false): void {
-        if (reset) {
-          this.pageIndex = 1;
-        }
-        // this.loading = true;
-        // this.randomUserService
-        //   .getUsers(this.pageIndex, this.pageSize, this.sortKey!, this.sortValue!, this.searchGenderList)
-        //   .subscribe((data: any) => {
-        //     this.loading = false;
-        //     this.total = 200;
-        //     this.listOfData = data.results;
-        //   });
-      }
-      search( ) {}
-      clear() {}
-      details() {
+        // const filterFunc = (item: { name: string; age: number; address: string }) =>
+        //     (this.listOfSearchName.length ? this.listOfSearchName.some(name =>
+        //         item.name.indexOf(name) !== -1) : true);
+        // const data = this.listOfData.filter(item => filterFunc(item));
+        // if (this.sortName && this.sortValue) {
+        //     this.listOfDisplayData = data.sort((a, b) =>
+        //         this.sortValue === 'ascend'
+        //             // tslint:disable-next-line:no-non-null-assertion
+        //             ? a[this.sortName!] > b[this.sortName!]
+        //                 ? 1
+        //                 : -1
+        //             // tslint:disable-next-line:no-non-null-assertion
+        //             : b[this.sortName!] > a[this.sortName!]
+        //                 ? 1
+        //                 : -1
+        //     );
+        // } else {
+        //     this.listOfDisplayData = data;
+        // }
+    }
+    clear() {
+        this.startDate = '';
+        this.endDate = '';
+        this.pageIndex = 1;
+        this.orderList = [];
+        this.money = 0;
+    }
+    details(data) {
         this.isVisible = true;
         this.title = '查看详情';
-      }
-      onChange(event) {
+        this.httpService.getAccountInfoByStaff(
+            {
+                staffId: data.staffId,
+                startDate: this.startDate,
+                endDate: this.endDate,
+            }
+        ).subscribe((r: any) => {
+            this.staffList = r;
+            this.orderList = r;
+            for (const item of r) {
+                this.money = this.addmoney(item.profits);
+            }
+            console.log('====>startDatestartDatestartDatestartDate', r);
+        }, err => this.err(err));
+    }
+    onChange(event) {
 
-      }
-      handleCancel() {
+    }
+    handleCancel() {
         this.isVisible = false;
+        this.staffList = [];
         // this.surveyForm.reset();
     }
     dateFormat(dateVal: Date | string, isEnd?: boolean) {
-        const timeZone = new Date().getTimezoneOffset() / (-60);
-        let newTimeZone = '';
-        if (Math.abs(timeZone) < 10) {
-          if (timeZone < 0) {
-            newTimeZone = '-0' + Math.abs(timeZone);
-          } else {
-            newTimeZone = '+0' + Math.abs(timeZone);
-          }
-        }
         if (isEnd) {
-          return dateVal ? moment(dateVal).format('YYYY-MM-DD') + 'T23:59:59.999' + newTimeZone + '00' : '';
+            return dateVal ? moment(dateVal).format('YYYY-MM-DD') + ' 23:59:59' : '';
         } else {
-          return dateVal ? moment(dateVal).format('YYYY-MM-DD') + 'T00:00:00.000' + newTimeZone + '00' : '';
+            return dateVal ? moment(dateVal).format('YYYY-MM-DD') + ' 00:00:00' : '';
         }
-      }
+    }
 }

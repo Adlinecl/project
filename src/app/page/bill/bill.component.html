@@ -9,8 +9,8 @@
                 <div>结束时间
                     <nz-date-picker [(ngModel)]="endDate" (ngModelChange)="onChange($event)"></nz-date-picker>
                 </div>
-                <div>盈利总额：
-                    <span></span>
+                <div *ngIf="tab.index == 0">盈利总额：
+                    <span>{{money}}</span>
                 </div>
                 <div>
                     <button nz-button (click)="search()" nzType="primary">查询</button>
@@ -18,51 +18,51 @@
 
                 </div>
                 <div class="bill" *ngIf="tab.index == 0">
-                    <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="listOfData" [nzLoading]="loading" [nzTotal]="total"
+                    <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="orderList" [nzLoading]="loading" [nzTotal]="total"
                         [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">
                         <thead (nzSortChange)="sort($event)" nzSingleSort>
                             <tr>
                                 <th>商品名称</th>
-                                <th nzShowSort nzSortKey="name">销售数量</th>
-                                <th nzShowSort nzSortKey="name">销售总价</th>
+                                <th nzShowSort nzSortKey="salesNum">销售数量</th>
+                                <th nzShowSort nzSortKey="salesTotalPrice">销售总价</th>
                                 <th>生产厂家</th>
-                                <th nzShowSort nzSortKey="name">盈利</th>
+                                <th nzShowSort nzSortKey="profits">盈利</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
+                            <tr *ngFor="let data of ajaxTable.data">
+                                <td>{{data?.goodsName}}</td>
+                                <td>{{data?.salesNum}}</td>
+                                <td>{{data?.salesTotalPrice}}</td>
+                                <td>{{data?.companys?.companyName}}</td>
+                                <td>{{data?.profits}}</td>
                             </tr>
                         </tbody>
                     </nz-table>
                 </div>
                 <div *ngIf="tab.index == 1">
-                    <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="listOfData" [nzLoading]="loading" [nzTotal]="total"
+                    <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="orderList" [nzLoading]="loading" [nzTotal]="total"
                         [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">
                         <thead (nzSortChange)="sort($event)" nzSingleSort>
                             <tr>
                                 <th>销售人姓名</th>
-                                <!-- <th nzShowSort nzSortKey="name">销售数量</th> -->
+                                <th nzShowSort nzSortKey="name">销售数量</th>
                                 <th nzShowSort nzSortKey="name">销售总价</th>
-                                <!-- <th>商品名称</th> -->
-                                <!-- <th>生产厂家</th> -->
-                                <th nzShowSort nzSortKey="name">盈利</th>
+                                <th>退货数量</th>
+                                <th>退货总价</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <!-- <td>1</td>
-                                <td>1</td> -->
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
+                            <tr *ngFor="let data of ajaxTable.data">
+                                <td>{{data.staffName}}</td>
+                                <td>{{data.num}}</td>
+                                <td>{{data.price}}</td>
+                                <td>{{data.returnNum}}
+                                </td>
+                                <td>{{data.returnPrice}}</td>
                                 <td>
-                                    <a (click)="details()">查看详情</a>
+                                    <a (click)="details(data)">查看详情</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -75,24 +75,34 @@
 <nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
     (nzOnCancel)="handleCancel()">
     <div class="bill">
-        <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="listOfData" [nzLoading]="loading" [nzTotal]="total"
+        <div>盈利总额：
+            <span>{{money}}</span>
+        </div>
+        <nz-table #ajaxTable nzShowSizeChanger [nzFrontPagination]="false" [nzData]="staffList" [nzLoading]="loading" [nzTotal]="total"
             [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData(true)">
             <thead (nzSortChange)="sort($event)" nzSingleSort>
                 <tr>
                     <th>商品名称</th>
+                    <th>生产厂家</th>
+                    <th>操作时间</th>
                     <th>销售数量</th>
                     <th>销售总价</th>
-                    <th>生产厂家</th>
+                    <th>退货数量</th>
+                    <th>退货总价</th>
                     <th>盈利</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
+                <tr *ngFor="let data of ajaxTable.data">
+                    <td>{{data?.goodsName}}</td>
+                    <td>{{data?.companys?.companyName}}</td>
+                    <td>{{data?.salesNum}}</td>
+                    <td>{{data?.date | date: 'yyyy-MM-dd'}}</td>
+                    <td>{{data?.salesTotalPrice}}</td>
+                    <td>{{data.returnNum}}
+                    </td>
+                    <td>{{data.returnPrice}}</td>
+                    <td>{{data?.profits}}</td>
                 </tr>
             </tbody>
         </nz-table>

@@ -1,19 +1,19 @@
 <div class="page">
-    <div class="top"></div>
+    <div class="top" style="height: 30px;"></div>
     <div class="card-container">
         <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [(nzSelectedIndex)]="currentTabIndex" (nzSelectChange)="tabChange($event)">
             <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.name ">
-                <div>开始时间
+                <div class="common" style="margin: 0 0 10px 10px">开始时间
                     <nz-date-picker [(ngModel)]="startDate" (ngModelChange)="onChange($event)"></nz-date-picker>
                 </div>
-                <div>结束时间
+                <div class="common" style="margin: 0 0 10px 10px">结束时间
                     <nz-date-picker [(ngModel)]="endDate" (ngModelChange)="onChange($event)"></nz-date-picker>
                 </div>
-                <div *ngIf="tab.index == 0">盈利总额：
+                <div *ngIf="tab.index == 0" class="common" style="margin: 0 0 10px 10px">盈利总额：
                     <span>{{money}}</span>
                 </div>
-                <div>
-                    <button nz-button (click)="search()" nzType="primary">查询</button>
+                <div class="common" style="margin: 0 0 10px 10px">
+                    <button nz-button style="margin-right: 20px"(click)="search()" nzType="primary">查询</button>
                     <button nz-button (click)="clear()" nzType="default">重置</button>
 
                 </div>

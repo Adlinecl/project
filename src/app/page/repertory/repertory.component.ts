@@ -111,6 +111,7 @@ export class RepertoryComponent implements OnInit {
     showTime = moment().format('YYYY-MM-DD');
     inprice;
     confirmPrice;
+    loading = true;
     constructor(
         private modalService: NzModalService,
         private wsService: WebSocketService,
@@ -166,24 +167,30 @@ export class RepertoryComponent implements OnInit {
         }, err => this.err(err));
     }
     getList() {
+        this.loading = true;
         this.httpService.findGoods({}).subscribe((r: any) => {
             this.list = r;
+            this.loading = false;
         }, err => this.err(err));
     }
     getInOutList() {
+        this.loading = true;
         this.httpService.findTradingInfo(
             {
                 type: this.type,
             }
         ).subscribe((r: any) => {
             this.inOutList = r;
+            this.loading = false;
             console.log('====>777777', r);
         }, err => this.err(err));
     }
     changeType() {
+        this.loading = true;
         this.getInOutList();
     }
     tabChange(event, currentTabIndex) {
+        // this.loading = true;
         this.searchModule = {
             name: '',
             goodType: '',
@@ -246,6 +253,7 @@ export class RepertoryComponent implements OnInit {
     change(key) {
     }
     editPerson(data) {
+        console.log(data);
         this.key = 'edit';
         this.id = data.id;
         this.title = '编辑商品资料';
@@ -262,6 +270,7 @@ export class RepertoryComponent implements OnInit {
         this.companyId = data.company.id;
         this.typeId = data.goodType.id;
         this.price = data.price;
+        this.salesPrice = data.price;
         console.log(0);
     }
     getSurveyInfo(id) {
@@ -269,8 +278,11 @@ export class RepertoryComponent implements OnInit {
     submitForm() {
     }
     handleOk(key): void {
+        this.loading = true;
         key = this.key;
         if (key === 0) {
+            this.name = '';
+            this.size = '';
             this.httpService.creatGoods(
                 {
                     name: this.name,
@@ -291,7 +303,6 @@ export class RepertoryComponent implements OnInit {
             // this.size = this.size;
             // this.companyId = this.companyId;
             // this.typeId = this.typeId;
-            // this.price = this.price;
             this.httpService.creatGoods(
                 {
                     id: this.id,
@@ -358,12 +369,14 @@ export class RepertoryComponent implements OnInit {
         // this.surveyForm.reset();
     }
     search() {
+        this.loading = true;
         if (this.currentTabIndex === 0) {
             this.httpService.findGoods(
                 this.searchModule
             ).subscribe((r: any) => {
                 // this.inOutList = r;
                 this.list = r;
+                this.loading = false;
                 console.log('====>777777', r);
             }, err => this.err(err));
         } else if (this.currentTabIndex === 1) {
@@ -377,10 +390,12 @@ export class RepertoryComponent implements OnInit {
             ).subscribe((r: any) => {
                 // this.inOutList = r;
                 this.inOutList = r;
+                this.loading = false;
             }, err => this.err(err));
         }
     }
     clear() {
+        this.loading = true;
         if (this.currentTabIndex === 0) {
             this.searchModule = {
                 name: '',
@@ -405,6 +420,8 @@ export class RepertoryComponent implements OnInit {
     }
     in(index, data) {
         this.key = 'in';
+        this.number = 0;
+        this.inprice = 0;
         if (index === 0) {
             this.isVisible = true;
             this.id = data.id;
@@ -428,6 +445,9 @@ export class RepertoryComponent implements OnInit {
     }
     out(index, data) {
         this.key = 'out';
+        this.number = 0;
+        this.inprice = 0;
+        this.confirmPrice = 0;
         if (index === 0) {
             this.isVisible = true;
             this.title = '出库信息';
@@ -474,25 +494,31 @@ export class RepertoryComponent implements OnInit {
         }
     }
     onChange(event) { }
-    addMoney(num, sales?: number) {
-        return (this.price * num).toFixed(2);
+    addMoney(num, price) {
+        return (price * num).toFixed(2);
     }
     changeSaleNum(num) {
-        this.inprice = this.addMoney(num);
+        this.activity = null;
+        this.number = num;
+        this.inprice = this.addMoney(this.price, num);
         this.confirmPrice = this.inprice;
+        // return this.inprice;
     }
     changeSaleDiscount(event) {
+        // tslint:disable-next-line:no-unused-expression
+        this.confirmPrice;
         console.log(event);
         let discount;
         if (event) {
+            this.changeSaleNum(this.number);
             discount = this.activityList.filter(item => item.id === event).map((key) => {
                 return Number(key.discount * 0.1).toFixed(2);
             });
             // tslint:disable-next-line:no-unused-expression));
             console.log(discount, this.inprice);
-            this.confirmPrice = this.addMoney(discount, this.inprice);
+            this.confirmPrice = this.addMoney(this.inprice, discount);
         } else if (!event) {
-            this.confirmPrice = this.inprice;
+            // this.confirmPrice = this.inprice;
         }
     }
     exportForm() {
@@ -505,13 +531,15 @@ export class RepertoryComponent implements OnInit {
             this.searchModule
         ).subscribe((r: any) => {
             result = r;
+            if (result) {
+                window.location.href = result;
+                // this.httpService.downlown(
+                //     result
+                // // tslint:disable-next-line:no-shadowed-variable
+                // ).subscribe((r: any) => {
+                //     console.log('==========>>>>>download', r);
+                // }, err => this.err(err));
+            }
         }, err => this.err(err));
-        if (result) {
-            this.httpService.downlown(
-                result
-            ).subscribe((r: any) => {
-                console.log('==========>>>>>download', r);
-            }, err => this.err(err));
-        }
     }
 }

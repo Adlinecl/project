@@ -1,7 +1,7 @@
 <nz-layout class="ant-layout">
     <nz-header class="head" style="display:flex;justify-content: space-between">
         <div class="title" style="color: #ffffff">
-            库存管理系统
+            汇龙家具商城进销存管理系统
         </div>
         <div class="login-user">
             <div class="news">
@@ -67,7 +67,7 @@
     <nz-layout>
         <nz-sider class="side" [nzWidth]="160">
             <ul nz-menu [nzMode]="'inline'" nzTheme='light'>
-                <li nz-menu-item [routerLink]="['/page/role']" routerLinkActive="ant-menu-item-selected">
+                <li nz-menu-item [routerLink]="['/page/role']" routerLinkActive="ant-menu-item-selected" *ngIf="!isJudgepemission">
                     <span title>
                         <!-- <img src="../../assets/images/site.png" alt="现场踏勘"> -->
                         <span class="changeMargin">基本信息管理</span>
@@ -91,7 +91,7 @@
                         <span class="changeMargin">商品销售</span>
                     </span>
                 </li>
-                <li nz-menu-item [routerLink]="['/page/bill']" routerLinkActive="ant-menu-item-selected">
+                <li nz-menu-item [routerLink]="['/page/bill']" routerLinkActive="ant-menu-item-selected" *ngIf="!isJudgepemission">
                     <span title>
                         <!-- <img src="../../assets/images/query.png" alt="记录检测"> -->
                         <span class="changeMargin">账单</span>
@@ -104,9 +104,9 @@
         </nz-content>
     </nz-layout>
 </nz-layout>
-<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="title" [nzContent]="modalContent" [nzFooter]="modalFooter"
-    (nzOnCancel)="handleCancel()">
-    <form nz-form [formGroup]="surveyForm" (ngSubmit)="submitForm()">
+<nz-modal class="popup-module" [(nzVisible)]="isVisible" [nzTitle]="title" [nzContent]="modalContent" [nzCancelText]="null"
+    [nzOkText]="null" (nzOnCancel)="handleCancel()">
+    <form nz-form [formGroup]="validateForm">
         <ng-template #modalTitle>
             {{title}}
         </ng-template>
@@ -115,7 +115,7 @@
                 <nz-form-label [nzSpan]="7" nzRequired>原密码</nz-form-label>
                 <div>
                     <nz-form-control [nzSpan]="12" nzHasFeedback>
-                        <input nz-input type="password" formControlName="ordPws" (ngModelChange)="validateConfirmPassword()" />
+                        <input nz-input type="password" formControlName="ordPws" />
                         <nz-form-explain *ngIf="validateForm.get('ordPws')?.dirty && validateForm.get('ordPws')?.hasError('required')">请输入原始密码!</nz-form-explain>
                     </nz-form-control>
                 </div>
@@ -143,10 +143,16 @@
                     </nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
+            <nz-form-item>
+                <nz-form-control [nzOffset]="7" [nzSpan]="12">
+                    <button nz-button nzType="primary" [disabled]="!validateForm.valid" (click)="submitForm($event, validateForm.value)">确定</button>
+                    <button nz-button (click)="resetForm($event)" style="margin-left: 8px;">取消</button>
+                </nz-form-control>
+            </nz-form-item>
         </ng-template>
-        <ng-template #modalFooter>
+        <!-- <ng-template #modalFooter>
             <button nz-button nzType="primary" (click)="submitForm()" [nzLoading]="isConfirmLoading">确定</button>
             <button nz-button nzType="default" class="ant-cancel" (click)="handleCancel()">取消</button>
-        </ng-template>
+        </ng-template> -->
     </form>
 </nz-modal>

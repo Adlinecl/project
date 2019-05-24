@@ -21,12 +21,14 @@
                         </nz-select>
                     </div>
                     <div *ngIf="tab.index == 1">操作日期
-                        <nz-date-picker [(ngModel)]="searchModule.fromDate" (ngModelChange)="onChange($event)"></nz-date-picker>至
+                        <nz-date-picker [(ngModel)]="searchModule.fromDate" (ngModelChange)="onChange($event)"></nz-date-picker>
+                        <span style="display: inline-block;
+                        margin-left: 20px;
+                        margin-right: 42px;">至</span>
                         <nz-date-picker [(ngModel)]="searchModule.toDate" (ngModelChange)="onChange($event)"></nz-date-picker>
                     </div>
                     <div *ngIf="tab.index == 1">出入库分类
-                        <nz-select class="common-select" style="width: 200px;height: 30px;" 
-                        [(ngModel)]="type" (ngModelChange)="changeType()" nzAllowClear>
+                        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="type" (ngModelChange)="changeType()" nzAllowClear>
                             <nz-option *ngFor="let option of selectTypeList" [nzLabel]="option.label" [nzValue]="option.value">
                             </nz-option>
                         </nz-select>
@@ -35,14 +37,14 @@
                     <!-- <div *ngIf="tab.index == 2">出库分类
                         <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-date-picker>
                     </div> -->
-                    <div *ngIf="tab.index !== 0">
-                        <button nz-button (click)="exportForm()" nzType="primary">导出表格</button>
-                    </div>
                     <div>
                         <button nz-button (click)="search()" nzType="primary">查询</button>
                     </div>
                     <div>
                         <button nz-button (click)="clear()" nzType="default">重置</button>
+                    </div>
+                    <div *ngIf="tab.index !== 0">
+                        <button nz-button (click)="exportForm()" nzType="danger">导出表格</button>
                     </div>
                     <!-- <div *ngIf="tab.index == 0">设置库存预警
                         <input type="text">
@@ -117,7 +119,7 @@
                         <tbody>
                             <tr *ngFor="let data of rowSelectionTable.data">
                                 <td>{{data?.companys?.companyName ? data?.companys?.companyName : '--'}}</td>
-                                <td>{{data?.goodsType ? data?.goodsType : '--'}}</td>
+                                <td>{{data?.goodsType?.type ? data?.goodsType?.type : '--'}}</td>
                                 <td>{{data?.goodsName}}</td>
                                 <td>{{data?.number ? data?.number : '--'}}</td>
                                 <td>{{data?.date | date: 'yyyy-MM-dd'}}</td>
@@ -192,8 +194,8 @@
     </div>
     <div *ngIf="isoutselect && !isadd">
         <em>活动名称</em>
-        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" 
-        (ngModelChange)="changeSaleDiscount(activity)" nzAllowClear>
+        <nz-select class="common-select" style="width: 200px;height: 30px;" [(ngModel)]="activity" (ngModelChange)="changeSaleDiscount(activity)"
+            nzAllowClear>
             <nz-option *ngFor="let option of activityList" [nzLabel]="option.name" [nzValue]="option.id">
             </nz-option>
         </nz-select>

@@ -1,7 +1,7 @@
 <div class="sales">
     <nz-table [nzShowTotal]="rangeTemplate" #rowSelectionTable [nzData]="orderList" [nzPageIndex]='nowPage' [nzTotal]="_total"
         [nzPageSize]="10" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageSizeChange)="refreshStatus()" (nzPageIndexChange)="pageChange($event)"
-        [nzLoading]="loading">
+        [nzLoading]="loading" [nzScroll]="{ x: '1600px' }">
         <thead class="table-thead">
             <tr>
                 <!-- // 商品分类:欧式、中式；商家名称，代码；商品基本信息：名称、代码、生产厂家、
@@ -43,7 +43,7 @@
                 <td>{{data?.staffPhone? data?.staffPhone : '--'}}</td>
                 <td>{{data?.status}}</td>
                 <td>
-                    <a (click)="returnSales(data)">退货</a>
+                    <a  *ngIf="data.status !== 'complete'" (click)="returnSales(data)">退货</a>
                 </td>
             </tr>
         </tbody>

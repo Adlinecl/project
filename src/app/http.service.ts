@@ -188,6 +188,6 @@ export class HttpService {
     }
     downlown(url: string): Observable<any> {
         // this.set();
-        return this.http.get(`${this.indexUrl}/export/${url}`, { headers: this.httpHeader });
+        return this.http.get(`${url}`, { headers: this.httpHeader });
     }
 }

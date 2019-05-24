@@ -22,6 +22,7 @@ export class RoleComponent implements OnInit {
     isAllDisplayDataChecked = false;
     isIndeterminate = false;
     allChecked = false;
+    loading = true;
     tabs = [
         // {
         //     index: 0,
@@ -85,7 +86,7 @@ export class RoleComponent implements OnInit {
     company = [];
     roleList = [];
     roleId = [];
-    users;
+    users = [];
     text;
     phone;
     searchItems = {
@@ -94,9 +95,10 @@ export class RoleComponent implements OnInit {
     };
     isrole = false;
     isdelete = false;
-    constructor(private modalService: NzModalService,
-                public httpService: HttpService,
-                private fb: FormBuilder, ) { }
+    constructor(
+        private modalService: NzModalService,
+        public httpService: HttpService,
+        private fb: FormBuilder, ) { }
 
     ngOnInit() {
         this.surveyForm = this.fb.group({
@@ -119,8 +121,10 @@ export class RoleComponent implements OnInit {
         // this.getUsers();
     }
     getRole() {
+        this.loading = true;
         this.httpService.getRoleList().subscribe((r: any) => {
             this.roleList = r;
+            this.loading = false;
             console.log(this.roleList);
         }, err => this.err(err));
     }
@@ -146,25 +150,31 @@ export class RoleComponent implements OnInit {
         }, err => this.err(err));
     }
     getUsers() {
+        this.loading = true;
         this.httpService.getUsers({}).subscribe((r: any) => {
             if (r.length > 0) {
                 for (const item of r) {
                     item.islook = false;
                 }
                 this.users = r;
+                this.loading = false;
             }
             console.log(this.users);
         }, err => this.err(err));
     }
     getActivityList() {
+        this.loading = true;
         this.httpService.getactivity().subscribe((r: any) => {
             this.activityList = r;
+            this.loading = false;
             console.log(this.activityList);
         }, err => this.err(err));
     }
     getCompany() {
+        this.loading = true;
         this.httpService.gcompany().subscribe((r: any) => {
             this.company = r;
+            this.loading = false;
             console.log(this.company);
         }, err => this.err(err));
     }
@@ -222,12 +232,15 @@ export class RoleComponent implements OnInit {
         this.refreshStatus();
     }
     search() {
+        this.loading = true;
         this.httpService.getUsers(this.searchItems).subscribe((r: any) => {
+            this.users = r;
+            this.loading = false;
             if (r.length > 0) {
                 for (const item of r) {
                     item.islook = false;
                 }
-                this.users = r;
+
             }
             console.log(this.users);
         }, err => this.err(err));
@@ -244,6 +257,7 @@ export class RoleComponent implements OnInit {
     //     this.isVisible = true;
     // }
     submitForm(type?: string, value?: string) {
+        this.loading = true;
         value = this.key;
         let postlist = {};
         if (value === 'componey') {
@@ -264,6 +278,9 @@ export class RoleComponent implements OnInit {
                         if (r === 'success') {
                             this.isVisible = false;
                             this.getCompany();
+                            this.modalService.success({
+                                nzTitle: '供应商添加成功',
+                            });
                         }
                     }, err => this.err(err));
                 } else {
@@ -278,6 +295,9 @@ export class RoleComponent implements OnInit {
                         if (r === 'success') {
                             this.isVisible = false;
                             this.getCompany();
+                            this.modalService.success({
+                                nzTitle: '供应商编辑成功',
+                            });
                         }
                     }, err => this.err(err));
                 }
@@ -316,6 +336,9 @@ export class RoleComponent implements OnInit {
                     this.httpService.updateUserOrRole(postlist).subscribe((r: any) => {
                         this.isVisible = false;
                         this.getUsers();
+                        this.modalService.success({
+                            nzTitle: '编辑成功',
+                        });
                     }, err => this.err(err));
                 }
 
@@ -339,6 +362,9 @@ export class RoleComponent implements OnInit {
                         if (r === 'success') {
                             this.isVisible = false;
                             this.getActivityList();
+                            this.modalService.success({
+                                nzTitle: '添加活动成功',
+                            });
                         }
                     }, err => this.err(err));
                 } else {
@@ -355,6 +381,9 @@ export class RoleComponent implements OnInit {
                         if (r === 'success') {
                             this.isVisible = false;
                             this.getActivityList();
+                            this.modalService.success({
+                                nzTitle: '编辑活动成功',
+                            });
                         }
                     }, err => this.err(err));
                 }
@@ -378,6 +407,9 @@ export class RoleComponent implements OnInit {
                     this.httpService.createRole(postlist).subscribe((r: any) => {
                         this.isVisible = false;
                         this.getRole();
+                        this.modalService.success({
+                            nzTitle: '添加角色成功',
+                        });
                     }, err => this.err(err));
                 }
             } else {
@@ -389,6 +421,9 @@ export class RoleComponent implements OnInit {
                 this.httpService.updateUserOrRole(postlist).subscribe((r: any) => {
                     this.isVisible = false;
                     this.getRole();
+                    this.modalService.success({
+                        nzTitle: '编辑权限成功',
+                    });
                 }, err => this.err(err));
             }
         } else if (value === 'editPersonNote') {
@@ -411,14 +446,20 @@ export class RoleComponent implements OnInit {
                 ).subscribe((r: any) => {
                     this.isVisible = false;
                     this.getUsers();
+                    this.modalService.success({
+                        nzTitle: '编辑成功',
+                    });
                 }, err => this.err(err));
             }
         }
 
     }
     handleCancel() {
-        this.isVisible = false;
         this.surveyForm.reset();
+        setTimeout(() => {
+            this.isVisible = false;
+
+        });
     }
     // 树形选择
     onChange($event: string[]): void {
@@ -450,6 +491,7 @@ export class RoleComponent implements OnInit {
         // }, err => this.err(err));
     }
     editPerson(index, data) {
+        console.log(data);
         switch (index) {
             case 0:
                 this.key = 'componey',
@@ -490,12 +532,16 @@ export class RoleComponent implements OnInit {
                 this.surveyForm.get('startDate').setValue(data.startDate);
                 break;
             case 3:
+                const perId = [];
                 this.key = 'role',
                     this.title = '编辑权限';
                 this.isVisible = true;
                 this.isadd = false;
                 this.id = data.id;
-                this.surveyForm.get('permissionId').setValue(data.permissionId);
+                for (const item of data.permissions) {
+                    perId.push(item.id);
+                }
+                this.surveyForm.get('permissionId').setValue(perId);
                 break;
             default:
                 break;
@@ -521,6 +567,7 @@ export class RoleComponent implements OnInit {
         }, 2000);
     }
     stopclick(data) {
+        this.loading = true;
         this.httpService.stopActivity(data).subscribe((r: any) => {
             if (r === 'success') {
                 this.getActivityList();
@@ -529,6 +576,7 @@ export class RoleComponent implements OnInit {
 
     }
     deleteItem(data, index) {
+        this.loading = true;
         this.modalService.confirm({
             nzTitle: '确定删除',
             // nzContent: '<b style="color: red;">Some descriptions</b>',
@@ -546,6 +594,9 @@ export class RoleComponent implements OnInit {
                     ).subscribe((r: any) => {
                         if (r === 'success') {
                             this.getCompany();
+                            this.modalService.success({
+                                nzTitle: '删除成功',
+                            });
                         }
                     }, err => this.err(err));
                 } else if (index === 1) {
@@ -556,6 +607,9 @@ export class RoleComponent implements OnInit {
                     ).subscribe((r: any) => {
                         if (r === 'success') {
                             this.getUsers();
+                            this.modalService.success({
+                                nzTitle: '删除成功',
+                            });
                         }
                     }, err => this.err(err));
                 } else if (index === 2) {
@@ -567,13 +621,19 @@ export class RoleComponent implements OnInit {
                     ).subscribe((r: any) => {
                         if (r === 'success') {
                             this.getActivityList();
+                            this.modalService.success({
+                                nzTitle: '删除成功',
+                            });
                         }
                     }, err => this.err(err));
-                }  else if (index === 3) {
+                } else if (index === 3) {
                     this.httpService.deleteRole(
                         data.id
                     ).subscribe((r: any) => {
                         this.getRole();
+                        this.modalService.success({
+                            nzTitle: '删除成功',
+                        });
                     }, err => this.err(err));
                 }
             },

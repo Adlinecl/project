@@ -45,8 +45,10 @@ export class SalesComponent implements OnInit {
         goodsId: '',
     };
     staffName;
+    loading = true;
     showTime = moment().format('YYYY-MM-DD');
-    constructor(private modalService: NzModalService,
+    constructor(
+        private modalService: NzModalService,
         public httpService: HttpService,
         private fb: FormBuilder, ) { }
 
@@ -77,8 +79,10 @@ export class SalesComponent implements OnInit {
         return this.returnPrice = Number(Number(this.sale.confirmPrice) / Number(this.sale.number) * Number(num)).toFixed(2);
     }
     getLis() {
+        this.loading = true;
         this.httpService.orderList().subscribe((r: any) => {
             this.orderList = r;
+            this.loading = false;
             console.log(this.orderList);
         }, err => this.err(err));
     }
@@ -131,11 +135,13 @@ export class SalesComponent implements OnInit {
             this.modalService.info({
                 nzTitle: '退货数量有误，请重新输入',
             });
+            return;
         } else {
             this.addMoney(num);
         }
     }
     handleOk() {
+        this.loading = true;
         this.httpService.putgoods(
             {
                 orderId: this.sale.orderId,
@@ -149,6 +155,7 @@ export class SalesComponent implements OnInit {
                 this.modalService.success({
                     nzTitle: '商品退货成功',
                 });
+                this.getLis();
             }
         }, err => this.err(err));
     }

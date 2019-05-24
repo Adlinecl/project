@@ -318,7 +318,7 @@
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <nz-select formControlName="permissionId" id="permissionId" style="width: 275px;height: 40px;" [nzSize]="size" nzMode="multiple"
                         nzPlaceHolder="选择权限">
-                        <nz-option *ngFor="let option of selectPermissions" [nzLabel]="option.text" [nzValue]="option.id"></nz-option>
+                        <nz-option id="permissionId" *ngFor="let option of selectPermissions" [nzLabel]="option.text" [nzValue]="option.id"></nz-option>
                     </nz-select>
                     <nz-form-explain *ngIf="surveyForm.get('permissionId').dirty && surveyForm.get('permissionId').errors">请选择权限!</nz-form-explain>
                 </nz-form-control>

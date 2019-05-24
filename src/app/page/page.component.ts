@@ -31,14 +31,17 @@ export class PageComponent implements OnInit {
     newPws;
     pws;
     name;
+    isJudgepemission = false;
+    userPermission = [];
+    userRole = [];
     constructor(
-                private router: Router,
-                public httpService: HttpService,
-                private modalService: NzModalService,
-                private route: ActivatedRoute,
-                private usService: UserSocketService,
-                private notification: NzNotificationService,
-                private fb: FormBuilder,
+        private router: Router,
+        public httpService: HttpService,
+        private modalService: NzModalService,
+        private route: ActivatedRoute,
+        private usService: UserSocketService,
+        private notification: NzNotificationService,
+        private fb: FormBuilder,
     ) {
         this.usService.messages.subscribe(msg => {
             this.notification.blank(
@@ -53,9 +56,9 @@ export class PageComponent implements OnInit {
 
     ngOnInit() {
         this.validateForm = this.fb.group({
-            ordPws: [null, [Validators.required]],
-            newPws: [null, [Validators.required]],
-            pws: [null, [this.confirmValidator]],
+            ordPws: ['', [Validators.required]],
+            newPws: ['', [Validators.required]],
+            pws: ['', [this.confirmValidator]],
         });
         this.getUserName();
         // console.log('========route', PageRoutingModule);
@@ -76,14 +79,10 @@ export class PageComponent implements OnInit {
     err = function catchError(err) {
         console.log('err', err);
         if (err) {
-            // this.enterParams = {
-            //   userName: '',
-            //   password: '',
-            // };
             this.modalService.error({
                 nzTitle: err.error.message ? err.error.message : '请重新登录！',
             });
-            this.router.navigate(['login']);
+            // this.router.navigate(['login']);
             return;
         }
     };
@@ -136,7 +135,9 @@ export class PageComponent implements OnInit {
         this.isrole = true;
     }
     newwaring() { }
-    submitForm() {
+    submitForm($event: any, value: any) {
+        console.log(value);
+        $event.preventDefault();
         // tslint:disable-next-line: forin
         for (const i in this.validateForm.controls) {
             this.validateForm.controls[i].markAsDirty();
@@ -152,24 +153,51 @@ export class PageComponent implements OnInit {
                     this.isVisible = false;
                     // this.isword = false;
                     // this.isshow = false;
-                    this.modalService.error({
+                    this.modalService.success({
                         nzTitle: 'success',
                     });
+                    this.validateForm.reset();
                 }
             }, err => this.err(err));
         }
         // this.isVisible = true;
     }
+    validateConfirmPassword(): void {
+        setTimeout(() => this.validateForm.controls.pws.updateValueAndValidity());
+    }
     confirmValidator = (control: FormControl): { [s: string]: boolean } => {
         if (!control.value) {
-          return { required: true };
-        } else if (control.value !== this.validateForm.controls.password.value) {
-          return { confirm: true, error: true };
+            return { required: true };
+        } else if (control.value !== this.validateForm.controls.newPws.value) {
+            return { newPws: true, error: true };
         }
         return {};
     }
-    handleCancel() {
+    resetForm(e: MouseEvent): void {
         this.isVisible = false;
+        e.preventDefault();
         this.validateForm.reset();
+        // tslint:disable-next-line:forin
+        for (const key in this.validateForm.controls) {
+            this.validateForm.controls[key].markAsPristine();
+            this.validateForm.controls[key].updateValueAndValidity();
+        }
+    }
+    handleCancel(e: MouseEvent) {
+        this.validateForm.reset();
+        this.isVisible = false;
+    }
+      // 做成显示角色在列表里面=================
+      getUserById(id, type?: string) {
+        this.httpService.getUserById(id).subscribe((r: any) => {
+            this.userRole = r;
+        }, err => this.err(err));
+    }
+    //// 做成显示权限但是没用
+    getRoleById(id) {
+        this.httpService.getRole(id).subscribe((r: any) => {
+            this.userPermission = r;
+            console.log('getRoleById', r);
+        }, err => this.err(err));
     }
 }

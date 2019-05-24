@@ -41,8 +41,8 @@ export class GoodsComponent implements OnInit {
     showTime = moment().format('YYYY-MM-DD');
     salesPrice;
     confirmPrice;
-    constructor
-        (
+    loading = true;
+    constructor(
         private modalService: NzModalService,
         public httpService: HttpService,
         private fb: FormBuilder,
@@ -73,8 +73,10 @@ export class GoodsComponent implements OnInit {
         }
     };
     getList() {
+        this.loading = true;
         this.httpService.findGoods({}).subscribe((r: any) => {
             this.list = r;
+            this.loading = false;
         }, err => this.err(err));
     }
     getActivityList() {
@@ -102,28 +104,56 @@ export class GoodsComponent implements OnInit {
     handleCancel() {
         this.isVisible = false;
     }
-    addMoney(num, sales?: number) {
-        return this.salesPrice = (this.price * num).toFixed(2);
+    addMoney(num, price) {
+        return (price * num).toFixed(2);
     }
+    // addMoney(num, sales?: number) {
+    //     return this.salesPrice = (this.price * num).toFixed(2);
+    // }
     changeSaleNum(num) {
-        this.addMoney(num);
+        this.activity = null;
+        this.saleItem.number = num;
+        this.salesPrice = this.addMoney(this.price, num);
         this.confirmPrice = this.salesPrice;
+        // return this.inprice;
     }
+    // changeSaleNum(num) {
+    //     this.addMoney(num);
+    //     this.confirmPrice = this.salesPrice;
+    // }
     changeSaleDiscount(event) {
+        // tslint:disable-next-line:no-unused-expression
+        this.confirmPrice;
         console.log(event);
         let discount;
         if (event) {
-            discount =  this.activityList.filter(item => item.id === event).map((key) => {
+            this.changeSaleNum(this.saleItem.number);
+            discount = this.activityList.filter(item => item.id === event).map((key) => {
                 return Number(key.discount * 0.1).toFixed(2);
             });
             // tslint:disable-next-line:no-unused-expression));
             console.log(discount, this.salesPrice);
-            this.confirmPrice = this.addMoney(discount, this.salesPrice);
+            this.confirmPrice = this.addMoney(this.salesPrice, discount);
         } else if (!event) {
-            this.confirmPrice = this.salesPrice;
+            // this.confirmPrice = this.inprice;
         }
     }
+    // changeSaleDiscount(event) {
+    //     console.log(event);
+    //     let discount;
+    //     if (event) {
+    //         discount =  this.activityList.filter(item => item.id === event).map((key) => {
+    //             return Number(key.discount * 0.1).toFixed(2);
+    //         });
+    //         // tslint:disable-next-line:no-unused-expression));
+    //         console.log(discount, this.salesPrice);
+    //         this.confirmPrice = this.addMoney(discount, this.salesPrice);
+    //     } else if (!event) {
+    //         this.confirmPrice = this.salesPrice;
+    //     }
+    // }
     handleOk() {
+        // this.loading = true;
         this.isVisible = false;
         this.httpService.putgoods(
             {
@@ -139,6 +169,7 @@ export class GoodsComponent implements OnInit {
             this.modalService.success({
                 nzTitle: '出售商品成功',
             });
+            this.getList();
             console.log('====>selectCoselectCompanympany', r);
         }, err => this.err(err));
     }
@@ -151,5 +182,8 @@ export class GoodsComponent implements OnInit {
         this.companyName = data.company.companyName;
         this.type = data.goodType.type;
         this.price = data.price;
+        this.salesPrice = 0;
+        this.confirmPrice = 0;
+        this.saleItem.number = 0;
     }
 }

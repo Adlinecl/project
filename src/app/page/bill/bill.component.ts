@@ -49,6 +49,7 @@ export class BillComponent implements OnInit {
     staffId;
     staffList = [];
     money;
+    loading = true;
     constructor(
         private modalService: NzModalService,
         public httpService: HttpService,
@@ -59,6 +60,7 @@ export class BillComponent implements OnInit {
         // this.surveyForm = this.fb.group({
         //     name: [null, [Validators.required]],
         // });
+        this.loading = false;
     }
     getUserName() {
         this.name = localStorage.getItem('name');
@@ -88,6 +90,7 @@ export class BillComponent implements OnInit {
         return num;
     }
     search() {
+        this.loading = true;
         this.startDate = this.dateFormat(this.startDate);
         this.endDate = this.dateFormat(this.endDate, true);
         if (this.startDate && this.endDate) {
@@ -99,6 +102,7 @@ export class BillComponent implements OnInit {
                     }
                 ).subscribe((r: any) => {
                     this.orderList = r;
+                    this.loading = false;
                     for (const item of r) {
                         this.money = this.addmoney(item.profits);
                     }
@@ -112,6 +116,7 @@ export class BillComponent implements OnInit {
                     }
                 ).subscribe((r: any) => {
                     this.orderList = r;
+                    this.loading = false;
                     console.log('====>startDatestartDatestartDatestartDate', r);
                 }, err => this.err(err));
             }
@@ -119,6 +124,7 @@ export class BillComponent implements OnInit {
             this.modalService.warning({
                 nzTitle: '请选择时间区间',
             });
+            this.loading = false;
         }
     }
     refreshStatus(): void {

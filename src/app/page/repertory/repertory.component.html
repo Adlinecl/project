@@ -53,7 +53,7 @@
                 </div>
                 <div class="search-table" *ngIf="tab.index == 0">
                     <div class="print">
-                        <button (click)="setNew(tab.index)">
+                        <button  *ngIf="!isbutton" (click)="setNew(tab.index)">
                             <!-- <i nz-icon [nzType]="'plus'"></i> -->
                             <span>新增</span>
                         </button>
@@ -72,7 +72,7 @@
                                 <th>生产厂家</th>
                                 <th>库存量</th>
                                 <th>库存预警（最低库存量）</th>
-                                <th>操作</th>
+                                <th *ngIf="!isbutton">操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -84,7 +84,7 @@
                                 <td>{{data?.company?.companyName}}</td>
                                 <td>{{data?.number}}</td>
                                 <td>{{data?.minNumber}}</td>
-                                <td>
+                                <td *ngIf="!isbutton">
                                     <a (click)="in(tab.index, data)">
                                         入库
                                     </a>&nbsp;&nbsp;

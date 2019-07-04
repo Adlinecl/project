@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
     // };
     result;
     a = false;
+    userList = [];
     // tslint:disable-next-line:member-ordering
     private delayTime = 9000;
     private preCTime = 0;
@@ -88,10 +89,22 @@ export class LoginComponent implements OnInit {
                 localStorage.setItem('token', JSON.stringify(r.token));
                 // localStorage.setItem('userName', JSON.stringify(r.userName));
                 localStorage.setItem('name', JSON.stringify(r.name));
+                localStorage.setItem('staffId', JSON.stringify(r.staffId));
                 this.router.navigate(['page']);
             }, err => { this.err(err); });
         }
     }
+    // getUsers() {
+    //     this.httpService.getUsers({}).subscribe((r: any) => {
+    //         if (r.length > 0) {
+    //             for (const item of r) {
+    //                 item.islook = false;
+    //             }
+    //             this.userList = r;
+    //         }
+    //         console.log('renyuan ', this.userList);
+    //     }, err => this.err(err));
+    // }
     // enter() {
     //   this.httpService.enterIn(this.enterParams).subscribe((r: any) => {
     //     console.log(this.enterParams, r);

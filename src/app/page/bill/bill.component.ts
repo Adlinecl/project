@@ -85,9 +85,31 @@ export class BillComponent implements OnInit {
             return;
         }
     };
-    addmoney(num) {
-        num += num;
+    addmoney(array) {
+        // num += num;
+        // return num;
+        let num = 0;
+        for (const item of array) {
+            num += item.profits;
+        }
         return num;
+        // const temp = {};
+        // // tslint:disable-next-line:forin
+        // for (const i in arry) {
+        //     const key = arry[i].profits;
+        //     if (temp[key]) {
+        //         temp[key].profits = arry[i].profits;
+        //     } else {
+        //         temp[key] = {};
+        //         temp[key].profits = arry[i].profits;
+        //     }
+        // }
+        // const newArry = [];
+        // // tslint:disable-next-line:forin
+        // for (const k in temp) {
+        //     newArry.push(temp[k]);
+        // }
+        // console.log(newArry);
     }
     search() {
         this.loading = true;
@@ -103,10 +125,7 @@ export class BillComponent implements OnInit {
                 ).subscribe((r: any) => {
                     this.orderList = r;
                     this.loading = false;
-                    for (const item of r) {
-                        this.money = this.addmoney(item.profits);
-                    }
-                    console.log('====>startDatestartDatestartDatestartDate', r);
+                    this.money = this.addmoney(r);
                 }, err => this.err(err));
             } else if (this.currentTabIndex === 1) {
                 this.httpService.getAccountByStaff(
@@ -187,11 +206,7 @@ export class BillComponent implements OnInit {
             }
         ).subscribe((r: any) => {
             this.staffList = r;
-            this.orderList = r;
-            for (const item of r) {
-                this.money = this.addmoney(item.profits);
-            }
-            console.log('====>startDatestartDatestartDatestartDate', r);
+            this.money = this.addmoney(r);
         }, err => this.err(err));
     }
     onChange(event) {

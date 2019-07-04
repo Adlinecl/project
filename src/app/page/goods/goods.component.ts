@@ -111,7 +111,7 @@ export class GoodsComponent implements OnInit {
     //     return this.salesPrice = (this.price * num).toFixed(2);
     // }
     changeSaleNum(num) {
-        this.activity = null;
+        // this.activity = null;
         this.saleItem.number = num;
         this.salesPrice = this.addMoney(this.price, num);
         this.confirmPrice = this.salesPrice;

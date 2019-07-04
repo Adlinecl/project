@@ -257,7 +257,7 @@ export class RoleComponent implements OnInit {
     //     this.isVisible = true;
     // }
     submitForm(type?: string, value?: string) {
-        this.loading = true;
+        // this.loading = true;
         value = this.key;
         let postlist = {};
         if (value === 'componey') {
@@ -576,7 +576,7 @@ export class RoleComponent implements OnInit {
 
     }
     deleteItem(data, index) {
-        this.loading = true;
+        // this.loading = true;
         this.modalService.confirm({
             nzTitle: '确定删除',
             // nzContent: '<b style="color: red;">Some descriptions</b>',

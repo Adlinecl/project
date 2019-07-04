@@ -219,28 +219,28 @@
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">员工姓名</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <input nz-input formControlName="name" id="name">
-                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写地点!</nz-form-explain>
+                    <nz-form-explain *ngIf="surveyForm.get('name').dirty && surveyForm.get('name').errors">请填写姓名!</nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item *ngIf="judge == 1 && !isrole">
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="phone">联系电话</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <input nz-input formControlName="phone" id="phone">
-                    <nz-form-explain *ngIf="surveyForm.get('phone').dirty && surveyForm.get('phone').errors">请填写地点!</nz-form-explain>
+                    <nz-form-explain *ngIf="surveyForm.get('phone').dirty && surveyForm.get('phone').errors">请填写电话!</nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item *ngIf="judge == 1 && !isrole">
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="age">年龄</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <input nz-input formControlName="age" id="age">
-                    <nz-form-explain *ngIf="surveyForm.get('age').dirty && surveyForm.get('age').errors">请填写地点!</nz-form-explain>
+                    <nz-form-explain *ngIf="surveyForm.get('age').dirty && surveyForm.get('age').errors">请填写年龄!</nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item *ngIf="judge == 1 && !isrole && isadd">
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="gender">性别</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <input nz-input formControlName="gender" id="gender">
-                    <nz-form-explain *ngIf="surveyForm.get('gender').dirty && surveyForm.get('gender').errors">请填写地点!</nz-form-explain>
+                    <nz-form-explain *ngIf="surveyForm.get('gender').dirty && surveyForm.get('gender').errors">请填写性别!</nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item *ngIf="judge == 1 && isdelete">

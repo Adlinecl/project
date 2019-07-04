@@ -64,6 +64,8 @@ export class RepertoryComponent implements OnInit {
     isadd = false;
     selectstatus;
     minNumber;
+    isbutton = true;
+    staffId = '';
     selectTypeList = [
         { label: '进货', value: 'REPLENISH' },
         { label: '退货', value: 'RETURN' },
@@ -112,6 +114,7 @@ export class RepertoryComponent implements OnInit {
     inprice;
     confirmPrice;
     loading = true;
+    newname;
     constructor(
         private modalService: NzModalService,
         private wsService: WebSocketService,
@@ -148,6 +151,7 @@ export class RepertoryComponent implements OnInit {
         this.getActivityList();
         this.getList();
         this.getUserName();
+        this.getstaffId();
     }
     // sendMessageToserver() {
     //     // this.wsService.sendMessage('Hello from client');
@@ -278,11 +282,11 @@ export class RepertoryComponent implements OnInit {
     submitForm() {
     }
     handleOk(key): void {
-        this.loading = true;
+        // this.loading = true;
         key = this.key;
         if (key === 0) {
-            this.name = '';
-            this.size = '';
+            // this.name = '';
+            // this.size = '';
             this.httpService.creatGoods(
                 {
                     name: this.name,
@@ -359,7 +363,14 @@ export class RepertoryComponent implements OnInit {
                 this.modalService.success({
                     nzTitle: '商品销售成功',
                 });
-                console.log('====>selectCoselectCompanympany', r);
+                console.log('====>selectCoselectCompanympany', {
+                    goodsId: this.id, // 商品id
+                    type: 'SALES', // 出入库类型
+                    number: Number(this.number), // 入库数量
+                    activity_id: this.activity, // 折扣
+                    customer_name: this.customer_name, // 客户id
+                    customer_phone: this.customer_phone, // 客户id
+                });
             }, err => this.err(err));
         }
         // this.getList();
@@ -498,13 +509,14 @@ export class RepertoryComponent implements OnInit {
         return (price * num).toFixed(2);
     }
     changeSaleNum(num) {
-        this.activity = null;
+        // this.activity = null;
         this.number = num;
         this.inprice = this.addMoney(this.price, num);
         this.confirmPrice = this.inprice;
         // return this.inprice;
     }
     changeSaleDiscount(event) {
+        // this.activity = event;
         // tslint:disable-next-line:no-unused-expression
         this.confirmPrice;
         console.log(event);
@@ -531,14 +543,65 @@ export class RepertoryComponent implements OnInit {
             this.searchModule
         ).subscribe((r: any) => {
             result = r;
+            console.log(r);
             if (result) {
-                window.location.href = result;
+                // window.location.href = result;
                 // this.httpService.downlown(
                 //     result
                 // // tslint:disable-next-line:no-shadowed-variable
                 // ).subscribe((r: any) => {
                 //     console.log('==========>>>>>download', r);
-                // }, err => this.err(err));
+                // });
+                window.location.href = result; 
+            }
+        }, err => this.err(err));
+    }
+    getstaffId() {
+        this.newname = localStorage.getItem('name');
+        if (this.newname) {
+            this.newname = JSON.parse(this.newname);
+            // console.log('name', this.name);
+        }
+        this.staffId = localStorage.getItem('staffId');
+        if (this.staffId) {
+            this.staffId = JSON.parse(this.staffId);
+            if (this.newname === 'admin') {
+                this.isbutton = false;
+                // this.isbutton = true;
+                return;
+            } else {
+                this.getUserById(this.staffId);
+            }
+        }
+    }
+    // 做成显示角色在列表里面=================
+    getUserById(id, type?: string) {
+        this.httpService.getUserById(id).subscribe((r: any) => {
+            if (r.roleName.length > 0) {
+                for (const item of r.roleName) {
+                    // console.log(item, item.id);
+                    this.getRoleById(item.id);
+                }
+            }
+        }, err => this.err(err));
+    }
+    //// 做成显示权限但是没用
+    getRoleById(id) {
+        this.httpService.getRole(id).subscribe((r: any) => {
+            console.log(r);
+            if (r.length > 0) {
+                for (const key of r) {
+                    for (const item of key.permissions) {
+                        console.log(item, item.code);
+                        if (item.code === 'U') {
+                            this.isbutton = false;
+                            return;
+                        } else {
+                            this.isbutton = true;
+                        }
+                    }
+
+                }
             }
         }, err => this.err(err));
     }

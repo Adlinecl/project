@@ -17,6 +17,7 @@ export class PageComponent implements OnInit {
     token = '';
     // isshow = false;
     isrole = false;
+    staffId = '';
     roleParams = {
         roleName: '',
         permissionId: '',
@@ -31,9 +32,11 @@ export class PageComponent implements OnInit {
     newPws;
     pws;
     name;
-    isJudgepemission = false;
+    isJudgepemission = true;
+    isbutton = true;
     userPermission = [];
     userRole = [];
+    userList = [];
     constructor(
         private router: Router,
         public httpService: HttpService,
@@ -74,6 +77,19 @@ export class PageComponent implements OnInit {
         if (this.token) {
             this.token = JSON.parse(this.token);
             console.log('token', this.token);
+        }
+        this.staffId = localStorage.getItem('staffId');
+        if (this.staffId) {
+            this.staffId = JSON.parse(this.staffId);
+            if (this.name === 'admin') {
+                this.isJudgepemission = false;
+                // this.isbutton = true;
+                return;
+            } else {
+                this.isJudgepemission = true;
+                console.log('staffId', this.staffId);
+                // this.getUserById(this.staffId);
+            }
         }
     }
     err = function catchError(err) {
@@ -124,7 +140,7 @@ export class PageComponent implements OnInit {
             console.log(r);
             localStorage.removeItem('token');
             localStorage.removeItem('name');
-            // localStorage.removeItem('userName');
+            localStorage.removeItem('staffId');
             this.router.navigate(['login']);
         }, err => this.err(err));
     }
@@ -186,18 +202,5 @@ export class PageComponent implements OnInit {
     handleCancel(e: MouseEvent) {
         this.validateForm.reset();
         this.isVisible = false;
-    }
-      // 做成显示角色在列表里面=================
-      getUserById(id, type?: string) {
-        this.httpService.getUserById(id).subscribe((r: any) => {
-            this.userRole = r;
-        }, err => this.err(err));
-    }
-    //// 做成显示权限但是没用
-    getRoleById(id) {
-        this.httpService.getRole(id).subscribe((r: any) => {
-            this.userPermission = r;
-            console.log('getRoleById', r);
-        }, err => this.err(err));
     }
 }
